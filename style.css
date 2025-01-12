@@ -2,15 +2,25 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    list-style: none;
 }
 
 body{
     width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .main{
+    height: 100%;
+}
+
+.main-container{
     width: 100%;
-    
+    height: 100%;
+    display: flex;
+
 }
 
 
@@ -26,3 +36,41 @@ body{
     font-size: 100px;
     color: purple;
 }
+
+
+.addbox{
+    width: 209px;
+    border: 1px solid black;
+    background: red;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.content-container{
+    padding-top: 89px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 88px;
+}
+
+
+.description{
+    font-size: 30px;
+}
+.current-player{
+    font-size: 40px;
+}
+
+.word{
+    display: flex;
+    gap: 10px;
+    font-size: 200px;
+}
+
+
+
