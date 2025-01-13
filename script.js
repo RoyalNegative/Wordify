@@ -1,9 +1,12 @@
 const wordContainer = document.querySelector('.word');
 
+const BACKEND_URL = "https://wordify-4ce3ae3ced68.herokuapp.com";
+
+
 
 async function fetchRandomWord() {
     try {
-        const response = await fetch('http://localhost:5000/random-word'); // Backend API'sine istek
+        const response = await fetch(BACKEND_URL); // Backend API'sine istek
         const data = await response.json(); 
 
         const word = data.word; // Kelime
