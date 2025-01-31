@@ -20,10 +20,33 @@ async function fetchLeaderboard() {
 
 setInterval(fetchLeaderboard, 5000);
 
+let countdownTimer;  
+let timeLeft = 40;   
+
+function startCountdown() {
+    clearInterval(countdownTimer);  
+    timeLeft = 40; 
+
+    const timerElement = document.getElementById("timer");
+    if (!timerElement) return;  
+
+    timerElement.innerText = `⏳ Time Left: ${timeLeft}s`;
+
+    countdownTimer = setInterval(() => {
+        timeLeft--;
+        timerElement.innerText = `⏳ Time Left: ${timeLeft}s`;
+
+        if (timeLeft <= 0) {
+            clearInterval(countdownTimer); 
+            timerElement.innerText = `⏳ Time's up!`;
+        }
+    }, 1000); 
+}
 
 
 socket.on("newplayer", (data) => {
     setcurrentplayer(data.playername);
+    startCountdown();
     console.log(`got new player ${data.playername}`);
 });
 
@@ -50,11 +73,15 @@ function setcurrentplayer(playername){
 
 socket.on("resetGame", () => {
     const player = document.getElementById("playerName");
-    console.log(`game reset command succesfull`);
     if (player) {
         player.innerText = "type !play to play!";
     }
+
+    clearInterval(countdownTimer); 
+    document.getElementById("timer").innerText = ""; 
+    console.log(`Game reset.`);
 });
+
 
 
 socket.on("correctGuess", (data) => {
