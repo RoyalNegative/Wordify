@@ -28,7 +28,7 @@ socket.on("newplayer", (data) => {
 });
 
 socket.on("newword", (data) => {
-    
+
     console.log("new word processed");
 });
 
@@ -83,8 +83,14 @@ async function fetchRandomWord() {
             descrip.innerText = definition;
         }
 
-
-        renderWord(word); 
+        if(word)
+        {
+            renderWord(word); 
+        }
+        else{
+            const word = document.getElementById("word");
+            word.innerHTML = "<li> type !play to get a word! </li>";
+        }
     } catch (error) {
         console.error('Error fetching random word:', error);
     }
