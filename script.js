@@ -27,7 +27,7 @@ socket.on("newplayer", (data) => {
     console.log(`got new player ${data.playername}`);
 });
 
-function newplayer(playername){
+function setcurrentplayer(playername){
     const player = document.getElementById("playerName");
     player.innerText = playername;
     console.log(`player shown on screen`);
