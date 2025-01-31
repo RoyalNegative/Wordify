@@ -28,8 +28,16 @@ socket.on("newplayer", (data) => {
 });
 
 socket.on("newword", (data) => {
-    renderWord(data.currentword.word);  
-    console.log(`new word processed as ${data.currentword.word}`);
+    if (data.currentword) {
+        console.log(`New word received: ${data.currentword.word}`);
+        renderWord(data.currentword.word);  
+
+        // Update the definition on screen
+        const descrip = document.getElementById("definition");
+        if (descrip) {
+            descrip.innerText = data.currentword.definition;
+        }
+    }
 });
 
 
@@ -109,5 +117,5 @@ function renderWord(word) {
     });
 }
 
-fetchRandomWord();
+// fetchRandomWord();
 
