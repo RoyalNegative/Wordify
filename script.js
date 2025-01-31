@@ -1,6 +1,6 @@
 const wordContainer = document.querySelector('.word');
 
-const BACKEND_URL = "https://wordify-4ce3ae3ced68.herokuapp.com";
+const BACKEND_URL = "http://161.35.157.143:5000";
 const socket = io(BACKEND_URL); 
 
 socket.on("connect", () => {
