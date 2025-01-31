@@ -47,7 +47,7 @@ function startCountdown() {
     }
 
     timerText.textContent = `${timeLeft}s`;
-    timerBar.style.width = "100%"; // Start full
+    timerBar.style.width = "100%"; 
 
     let startTime = Date.now();
     countdownTimer = setInterval(() => {
@@ -82,28 +82,6 @@ socket.on("gameStart", (data) => {
 
     startCountdown();
 });
-
-
-
-
-// socket.on("newplayer", (data) => {
-//     setcurrentplayer(data.playername);
-//     startCountdown();
-//     console.log(`got new player ${data.playername}`);
-// });
-
-// socket.on("newword", (data) => {
-//     if (data.currentword) {
-//         console.log(`New word received: ${data.currentword.word}`);
-//         renderWord(data.currentword.word);  
-
-//         // Update the definition on screen
-//         const descrip = document.getElementById("definition");
-//         if (descrip) {
-//             descrip.innerText = data.currentword.definition;
-//         }
-//     }
-// });
 
 
 function setcurrentplayer(playername){
