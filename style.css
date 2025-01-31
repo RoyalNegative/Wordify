@@ -19,7 +19,7 @@ body{
 }
 
 .timer-bar-container {
-    width: 60%; /* Adjust width as needed */
+    width: 60%; /* Adjust width */
     height: 20px;
     background-color: #ddd;
     border-radius: 10px;
@@ -45,6 +45,7 @@ body{
     font-weight: bold;
     color: black;
 }
+
 
 
 .single-player-container{
