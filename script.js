@@ -103,10 +103,32 @@ socket.on("resetGame", () => {
 });
 
 
-
+socket.on("wrongGuess", (data) => {
+    console.log("Yanlis cevap");
+    const wordul = document.getElementById('word');
+    let blinkCount = 0;
+    const blinkInterval = setInterval(() => {
+        wordul.style.backgroundColor = blinkCount % 2 === 0 ? 'red' : '';
+        blinkCount++;
+        if (blinkCount === 2) {
+            clearInterval(blinkInterval);
+            wordul.style.backgroundColor = '';
+        }
+    }, 500);
+});
 
 socket.on("correctGuess", (data) => {
     console.log("✅ Correct guess received! Revealing word.");
+    const wordul = document.getElementById('word');
+    let blinkCount = 0;
+    const blinkInterval = setInterval(() => {
+        wordul.style.backgroundColor = blinkCount % 2 === 0 ? 'green' : '';
+        blinkCount++;
+        if (blinkCount === 6) {
+            clearInterval(blinkInterval);
+            wordul.style.backgroundColor = '';
+        }
+    }, 500);
     revealWord(data.word);
     
     clearInterval(countdownTimer); 
