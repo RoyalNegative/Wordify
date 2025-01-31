@@ -27,6 +27,11 @@ socket.on("newplayer", (data) => {
     console.log(`got new player ${data.playername}`);
 });
 
+socket.on("newword", (data) => {
+    
+    console.log("new word processed");
+});
+
 function setcurrentplayer(playername){
     const player = document.getElementById("playerName");
     player.innerText = playername;
