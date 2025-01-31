@@ -128,11 +128,14 @@ socket.on("resetGame", () => {
 
 
 socket.on("correctGuess", (data) => {
-    console.log("revealing word.");
+    console.log("✅ Correct guess received! Revealing word.");
     revealWord(data.word);
-
-    clearInterval(countdownTimer);
+    
+    clearInterval(countdownTimer); 
+    document.getElementById("timer-bar").style.width = "0%";
+    document.getElementById("timer-text").textContent = "";
 });
+
 
 
 
