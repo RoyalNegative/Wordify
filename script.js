@@ -115,7 +115,10 @@ socket.on("resetGame", () => {
 socket.on("correctGuess", (data) => {
     console.log("revealing word.");
     revealWord(data.word);
+    
+    clearInterval(countdownTimer);
 });
+
 
 
 function revealWord(word) {
