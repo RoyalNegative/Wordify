@@ -87,8 +87,8 @@ async function fetchRandomWord() {
             
         }
         else{
-            const word = document.getElementById("word");
-            word.innerHTML = "<li> type !play to get a word! </li>";
+            const screenword = document.getElementById("word");
+            screenword.innerHTML = "<li> type !play to get a word! </li>";
         }
     } catch (error) {
         console.error('Error fetching random word:', error);
