@@ -1,22 +1,61 @@
 const wordContainer = document.querySelector('.word');
 
 const BACKEND_URL = "https://wordify-4ce3ae3ced68.herokuapp.com";
+const socket = io(BACKEND_URL); 
+
+
+async function fetchLeaderboard() {
+    try {
+        const response = await fetch(`${BACKEND_URL}/leaderboard`);
+        const data = await response.json();
+        const leaderboardContainer = document.querySelector('.leaderboard');
+        leaderboardContainer.innerHTML = "<h3>LeaderBoard:</h3>";
+        data.forEach(player => {
+            leaderboardContainer.innerHTML += `<p>${player.username}: ${player.score}</p>`;
+        });
+    } catch (error) {
+        console.error('Error fetching leaderboard:', error);
+    }
+}
+
+setInterval(fetchLeaderboard, 5000);
+
+socket.on("correctGuess", (data) => {
+    revealWord(data.word);
+});
+
+
+function revealWord(word) {
+    const wordContainer = document.querySelector('.word');
+    wordContainer.innerHTML = ''; 
+
+    word.split('').forEach((char, index) => {
+        setTimeout(() => {
+            const li = document.createElement('li');
+            li.textContent = char;  
+            wordContainer.appendChild(li);
+        }, index * 300); 
+    });
+}
 
 
 
 async function fetchRandomWord() {
     try {
-        const response = await fetch(`${BACKEND_URL}/random-word`); // Backend API'sine istek
+        const response = await fetch(`${BACKEND_URL}/random-word`); 
         const data = await response.json(); 
 
-        const word = data.word; // Kelime
-        const definition = data.definition; // Tanım
+        const word = data.word; 
+        const definition = data.definition;
 
-        // DOM Güncelleme
+        
         const descrip = document.getElementById("definition");
-        descrip.innerText = definition;
+        if (descrip) {
+            descrip.innerText = definition;
+        }
 
-        renderWord(word); // Kelimeyi ekrana yerleştir
+
+        renderWord(word); 
     } catch (error) {
         console.error('Error fetching random word:', error);
     }
@@ -25,11 +64,12 @@ async function fetchRandomWord() {
 
 function renderWord(word) {
     const wordContainer = document.querySelector('.word');
-    wordContainer.innerHTML = ''; // Önceki kelimeyi temizle
+    if (!wordContainer) return;
+    wordContainer.innerHTML = ''; 
 
     word.split('').forEach(() => {
         const li = document.createElement('li');
-        li.textContent = '-'; // Harfler başlangıçta gizli
+        li.textContent = '-'; 
         wordContainer.appendChild(li);
     });
 }
