@@ -1,6 +1,6 @@
 const wordContainer = document.querySelector('.word');
 
-const BACKEND_URL = "http://161.35.157.143:5000";
+const BACKEND_URL = "https://api-wordify.com";
 const socket = io(BACKEND_URL); 
 
 socket.on("connect", () => {
