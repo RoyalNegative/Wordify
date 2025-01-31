@@ -103,7 +103,7 @@ socket.on("resetGame", () => {
 });
 
 
-socket.on("wrongGuess", (data) => {
+socket.on("wrongGuess", () => {
     console.log("Yanlis cevap");
     const wordul = document.getElementById('word');
     let blinkCount = 0;
