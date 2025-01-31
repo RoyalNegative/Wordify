@@ -20,6 +20,14 @@ async function fetchLeaderboard() {
 
 setInterval(fetchLeaderboard, 5000);
 
+
+
+socket.on("newplayer", (data) => {
+    setcurrentplayer(data.playername);
+});
+
+
+
 socket.on("correctGuess", (data) => {
     revealWord(data.word);
 });
