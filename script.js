@@ -24,15 +24,19 @@ setInterval(fetchLeaderboard, 5000);
 
 socket.on("newplayer", (data) => {
     setcurrentplayer(data.playername);
+    console.log(`got new player ${data.playername}`);
 });
 
 function newplayer(playername){
     const player = document.getElementById("playerName");
     player.innerText = playername;
+    console.log(`player shown on screen`);
+
 }
 
 socket.on("resetGame", () => {
     const player = document.getElementById("playerName");
+    console.log(`game reset command succesfull`)
     if (player) {
         player.innerText = "type !play to play!";
     }
@@ -40,6 +44,7 @@ socket.on("resetGame", () => {
 
 
 socket.on("correctGuess", (data) => {
+    console.log("revealing word.")
     revealWord(data.word);
 });
 
