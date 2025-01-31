@@ -28,13 +28,24 @@ function startCountdown() {
     timeLeft = 40; 
 
     const timerElement = document.getElementById("timer");
-    if (!timerElement) return;  
+    const timerBar = document.getElementById("timer-bar");  
+    const timerText = document.getElementById("timer-text");  
+
+    if (!timerElement || !timerBar || !timerText) return;  
 
     timerElement.innerText = `⏳ Time Left: ${timeLeft}s`;
+    timerBar.style.width = "0%"; // Reset bar
+    timerText.textContent = `${timeLeft}s`; // Reset text
 
+    let elapsedTime = 0;
     countdownTimer = setInterval(() => {
         timeLeft--;
+        elapsedTime++;
+        let progress = (elapsedTime / 40) * 100;
+
         timerElement.innerText = `⏳ Time Left: ${timeLeft}s`;
+        timerBar.style.width = `${progress}%`;
+        timerText.textContent = `${timeLeft}s`;
 
         if (timeLeft <= 0) {
             clearInterval(countdownTimer); 
@@ -42,6 +53,7 @@ function startCountdown() {
         }
     }, 1000); 
 }
+
 
 
 socket.on("newplayer", (data) => {
