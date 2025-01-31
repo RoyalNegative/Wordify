@@ -36,7 +36,7 @@ function newplayer(playername){
 
 socket.on("resetGame", () => {
     const player = document.getElementById("playerName");
-    console.log(`game reset command succesfull`)
+    console.log(`game reset command succesfull`);
     if (player) {
         player.innerText = "type !play to play!";
     }
@@ -44,7 +44,7 @@ socket.on("resetGame", () => {
 
 
 socket.on("correctGuess", (data) => {
-    console.log("revealing word.")
+    console.log("revealing word.");
     revealWord(data.word);
 });
 
