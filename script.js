@@ -26,6 +26,17 @@ socket.on("newplayer", (data) => {
     setcurrentplayer(data.playername);
 });
 
+function newplayer(playername){
+    const player = document.getElementById("playerName");
+    player.innerText = playername;
+}
+
+socket.on("resetGame", () => {
+    const player = document.getElementById("playerName");
+    if (player) {
+        player.innerText = "type !play to play!";
+    }
+});
 
 
 socket.on("correctGuess", (data) => {
