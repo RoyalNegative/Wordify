@@ -27,35 +27,47 @@ function startCountdown() {
     clearInterval(countdownTimer);  
     timeLeft = 40; 
 
-    const timerElement = document.getElementById("timer");
-    const timerBar = document.getElementById("timer-bar");  
     const timerText = document.getElementById("timer-text");  
+    const timerBar = document.getElementById("timer-bar");
 
-    if (!timerElement || !timerBar || !timerText) {
-        console.log("timer problem, eleman bulamiyor");
-        return
-    };  
+    if (!timerBar || !timerText) {
+        console.log("Timer elements not found!");
+        return;
+    }
 
-    timerElement.innerText = `⏳ Time Left: ${timeLeft}s`;
-    timerBar.style.width = "0%"; // Reset bar
-    timerText.textContent = `${timeLeft}s`; // Reset text
+    timerText.textContent = `${timeLeft}s`;
+    timerBar.style.width = "100%"; // Start full
 
-    let elapsedTime = 0;
+    let startTime = Date.now();
     countdownTimer = setInterval(() => {
-        timeLeft--;
-        elapsedTime++;
-        let progress = (elapsedTime / 40) * 100;
+        let elapsed = Math.floor((Date.now() - startTime) / 1000);
+        timeLeft = 40 - elapsed;  
 
-        timerElement.innerText = `⏳ Time Left: ${timeLeft}s`;
+        let progress = (timeLeft / 40) * 100;
         timerBar.style.width = `${progress}%`;
         timerText.textContent = `${timeLeft}s`;
 
         if (timeLeft <= 0) {
             clearInterval(countdownTimer); 
-            timerElement.innerText = `⏳ Time's up!`;
+            timerText.textContent = `⏳ Time's up!`;
+            timerBar.style.width = "0%";
         }
     }, 1000); 
 }
+
+
+socket.on("gameStart", (data) => {
+    setcurrentplayer(data.playername);
+    renderWord(data.word.word);  
+
+    
+    const descrip = document.getElementById("definition");
+    if (descrip) {
+        descrip.innerText = data.word.definition;
+    }
+
+    startCountdown(); 
+});
 
 
 
@@ -87,15 +99,16 @@ function setcurrentplayer(playername){
 }
 
 socket.on("resetGame", () => {
-    const player = document.getElementById("playerName");
-    if (player) {
-        player.innerText = "type !play to play!";
-    }
-
+    document.getElementById("playerName").innerText = "type !play to play!";
+    document.getElementById("definition").innerText = ".....";
+    
     clearInterval(countdownTimer); 
-    document.getElementById("timer").innerText = ""; 
+    document.getElementById("timer-bar").style.width = "0%"; 
+    document.getElementById("timer-text").textContent = "";
+
     console.log(`Game reset.`);
 });
+
 
 
 
