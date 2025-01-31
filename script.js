@@ -74,18 +74,17 @@ async function fetchRandomWord() {
         const response = await fetch(`${BACKEND_URL}/random-word`); 
         const data = await response.json(); 
 
-        const word = data.word; 
-        const definition = data.definition;
-
-        
-        const descrip = document.getElementById("definition");
-        if (descrip) {
-            descrip.innerText = definition;
-        }
-
-        if(word)
-        {
+        if(data.word){
+            const word = data.word; 
+            const definition = data.definition;
+            
+            
+            const descrip = document.getElementById("definition");
+            if (descrip) {
+                descrip.innerText = definition;
+            }
             renderWord(word); 
+            
         }
         else{
             const word = document.getElementById("word");
