@@ -3,6 +3,17 @@ const wordContainer = document.querySelector('.word');
 const BACKEND_URL = "https://wordify-4ce3ae3ced68.herokuapp.com";
 const socket = io(BACKEND_URL); 
 
+socket.on("connect", () => {
+    console.log("✅ Connected to server!");
+});
+
+socket.on("disconnect", () => {
+    console.warn("❌ Disconnected from server. Trying to reconnect...");
+});
+
+socket.on("connect_error", (error) => {
+    console.error("⚠️ Socket connection error:", error);
+});
 
 async function fetchLeaderboard() {
     try {
@@ -57,38 +68,42 @@ function startCountdown() {
 
 
 socket.on("gameStart", (data) => {
-    setcurrentplayer(data.playername);
-    renderWord(data.word.word);  
+    console.log(`🟢 Received gameStart event!`);
+    console.log(`🔵 New player: ${data.playername}`);
+    console.log(`🟡 Word received: ${data.word.word}`);
 
-    
+    setcurrentplayer(data.playername);
+    renderWord(data.word.word);
+
     const descrip = document.getElementById("definition");
     if (descrip) {
         descrip.innerText = data.word.definition;
     }
 
-    startCountdown(); 
-});
-
-
-
-socket.on("newplayer", (data) => {
-    setcurrentplayer(data.playername);
     startCountdown();
-    console.log(`got new player ${data.playername}`);
 });
 
-socket.on("newword", (data) => {
-    if (data.currentword) {
-        console.log(`New word received: ${data.currentword.word}`);
-        renderWord(data.currentword.word);  
 
-        // Update the definition on screen
-        const descrip = document.getElementById("definition");
-        if (descrip) {
-            descrip.innerText = data.currentword.definition;
-        }
-    }
-});
+
+
+// socket.on("newplayer", (data) => {
+//     setcurrentplayer(data.playername);
+//     startCountdown();
+//     console.log(`got new player ${data.playername}`);
+// });
+
+// socket.on("newword", (data) => {
+//     if (data.currentword) {
+//         console.log(`New word received: ${data.currentword.word}`);
+//         renderWord(data.currentword.word);  
+
+//         // Update the definition on screen
+//         const descrip = document.getElementById("definition");
+//         if (descrip) {
+//             descrip.innerText = data.currentword.definition;
+//         }
+//     }
+// });
 
 
 function setcurrentplayer(playername){
@@ -115,7 +130,7 @@ socket.on("resetGame", () => {
 socket.on("correctGuess", (data) => {
     console.log("revealing word.");
     revealWord(data.word);
-    
+
     clearInterval(countdownTimer);
 });
 
@@ -175,5 +190,5 @@ function renderWord(word) {
     });
 }
 
-// fetchRandomWord();
+
 
