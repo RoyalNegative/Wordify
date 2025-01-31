@@ -28,9 +28,10 @@ socket.on("newplayer", (data) => {
 });
 
 socket.on("newword", (data) => {
-    fetchRandomWord();
-    console.log("new word processed");
+    renderWord(data.currentword.word);  
+    console.log(`new word processed as ${data.currentword.word}`);
 });
+
 
 function setcurrentplayer(playername){
     const player = document.getElementById("playerName");
@@ -107,4 +108,6 @@ function renderWord(word) {
         wordContainer.appendChild(li);
     });
 }
+
+fetchRandomWord();
 
