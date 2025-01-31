@@ -31,7 +31,10 @@ function startCountdown() {
     const timerBar = document.getElementById("timer-bar");  
     const timerText = document.getElementById("timer-text");  
 
-    if (!timerElement || !timerBar || !timerText) return;  
+    if (!timerElement || !timerBar || !timerText) {
+        console.log("timer problem, eleman bulamiyor");
+        return
+    };  
 
     timerElement.innerText = `⏳ Time Left: ${timeLeft}s`;
     timerBar.style.width = "0%"; // Reset bar
