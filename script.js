@@ -28,7 +28,7 @@ socket.on("newplayer", (data) => {
 });
 
 socket.on("newword", (data) => {
-
+    fetchRandomWord();
     console.log("new word processed");
 });
 
@@ -108,4 +108,3 @@ function renderWord(word) {
     });
 }
 
-fetchRandomWord();
