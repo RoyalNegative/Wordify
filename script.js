@@ -99,7 +99,7 @@ function setcurrentplayer(playername){
 }
 
 socket.on("resetGame", () => {
-    document.getElementById("playerName").innerText = "type !play to play!";
+    document.getElementById("playerName").innerText = "type !play / !play yazip oynayabilirsiniz!";
     document.getElementById("definition").innerText = ".....";
     
     clearInterval(countdownTimer); 
