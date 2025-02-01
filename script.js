@@ -10,16 +10,50 @@ countdownText.classList.add("countdown-text");
 document.body.appendChild(countdownText);
 
 socket.on("openChatMode", (data) => {
-    if (data.status) {
+    openChatMode = data.status;
+    
+    const openChatNotification = document.getElementById("openChatNotification");
+    if (!openChatNotification) return;
+
+    if (openChatMode) {
         openChatArea.classList.add("open-chat-active");
+
+        // Sayfayı aşağı kaydır (OpenChat alanına)
         setTimeout(() => {
             window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
         }, 300);
-        startOpenChatCountdown();
+
+        // Bildirimi göster
+        openChatNotification.innerText = `🚀 OpenChat Modu Açıldı! Herkes tahmin yapabilir.`;
+        openChatNotification.style.backgroundColor = "red";
+        openChatNotification.style.display = "block";
+
+        // OpenChat alanını düzgün göstermek için animasyonu tetikle
+        openChatArea.style.bottom = "0";
+
+        // 3 saniye sonra bildirimi yavaşça kaybolacak
+        setTimeout(() => {
+            openChatNotification.style.display = "none";
+        }, 3000);
+
+        startOpenChatCountdown();  // OpenChat açıldığında geri sayımı başlat
     } else {
         openChatArea.classList.remove("open-chat-active");
+
+        // OpenChat kapandı bildirimini göster
+        openChatNotification.innerText = `🔒 OpenChat Modu Kapatıldı!`;
+        openChatNotification.style.backgroundColor = "black";
+        openChatNotification.style.display = "block";
+
+        // OpenChat alanını geri gizle
+        openChatArea.style.bottom = "-250px";
+
+        setTimeout(() => {
+            openChatNotification.style.display = "none";
+        }, 3000);
     }
 });
+
 
 function startOpenChatCountdown() {
     let countdown = 5;
@@ -110,51 +144,71 @@ socket.on("gameStart", (data) => {
         renderOpenChatWord(data.word.word);
     } else {
         setcurrentplayer(data.playername);
-        renderWord(data.word.word);
+        renderWord(data.word.word, data.word.definition);
     }
+ // ✅ MODERATOR KONTROLÜ ile !openchat KOMUTU
+ if (command === "!openchat") {
+    if (tags.mod || tags.badges?.broadcaster) { 
+        if (!openChatMode) {
+            openChatMode = true;
+            io.emit("openChatMode", { status: true });
+            twitchClient.say(channel, `🚀 OpenChat Modu **Moderator** tarafından açıldı! Herkes tahmin yapabilir!`);
+        } else {
+            twitchClient.say(channel, `⚠️ OpenChat Modu zaten açık!`);
+        }
+    } else {
+        twitchClient.say(channel, `❌ Bu komutu yalnızca **moderatorler** kullanabilir!`);
+    }
+}
 
+// ✅ !closechat KOMUTU (Moderatorler için)
+if (command === "!closechat") {
+    if (tags.mod || tags.badges?.broadcaster) { 
+        if (openChatMode) {
+            openChatMode = false;
+            io.emit("openChatMode", { status: false });
+            twitchClient.say(channel, `🔒 OpenChat Modu **Moderator** tarafından kapatıldı!`);
+        } else {
+            twitchClient.say(channel, `⚠️ OpenChat Modu zaten kapalı!`);
+        }
+    } else {
+        twitchClient.say(channel, `❌ Bu komutu yalnızca **moderatorler** kullanabilir!`);
+    }
+}
     playSound();
-    const descrip = document.getElementById("definition");
-    if (descrip) {
-        descrip.innerText = data.word.definition;
-    }
-
     startCountdown();
 });
 
-socket.on("openChatWinner", (data) => {
-    const openChatWordContainer = document.getElementById("openChatWord");
-    openChatWordContainer.innerHTML = ''; 
+socket.on("correctGuess", (data) => {
+    console.log("✅ Correct guess received! Revealing word.");
+    
+    const wordContainer = document.getElementById("word");
+    wordContainer.innerHTML = '';
 
-    const winnerText = document.createElement("h2");
-    winnerText.innerText = `🎉 ${data.winner}`;
-    winnerText.classList.add("winner-reveal");
-    openChatWordContainer.appendChild(winnerText);
-
+    // Kelimeyi harf harf ekrana getir
     data.word.split('').forEach((char, index) => {
         setTimeout(() => {
             const li = document.createElement('li');
             li.textContent = char;
             li.classList.add("word-reveal");
-            openChatWordContainer.appendChild(li);
+            wordContainer.appendChild(li);
         }, index * 300);
     });
 
+    // Arkaya yeşil yanıp sönme efekti
     let blinkCount = 0;
     const blinkInterval = setInterval(() => {
-        winnerText.style.backgroundColor = blinkCount % 2 === 0 ? 'green' : '';
-        openChatWordContainer.style.backgroundColor = blinkCount % 2 === 0 ? 'green' : '';
+        wordContainer.style.backgroundColor = blinkCount % 2 === 0 ? 'green' : '';
         blinkCount++;
-        if (blinkCount === 6) {
+        if (blinkCount === 3) {
             clearInterval(blinkInterval);
-            winnerText.style.backgroundColor = '';
-            openChatWordContainer.style.backgroundColor = '';
+            wordContainer.style.backgroundColor = '';
         }
-    }, 500);
+    }, 1000);
 
-    setTimeout(() => {
-        winnerText.remove();
-    }, 3000);
+    clearInterval(countdownTimer);
+    document.getElementById("timer-bar").style.width = "0%";
+    document.getElementById("timer-text").textContent = "";
 });
 
 function playSound() {
@@ -162,9 +216,46 @@ function playSound() {
     audio.play();
 }
 
+
+socket.on("wrongGuess", () => {
+    console.log("❌ Yanlış tahmin!");
+    playSoundWrongGuess();
+
+    const wordContainer = document.getElementById("word"); 
+    let blinkCount = 0;
+
+    const blinkInterval = setInterval(() => {
+        wordContainer.style.backgroundColor = blinkCount % 2 === 0 ? 'red' : '';
+        blinkCount++;
+        if (blinkCount === 3) {
+            clearInterval(blinkInterval);
+            wordContainer.style.backgroundColor = '';
+        }
+    }, 700);
+});
+
+function playSoundWrongGuess() {
+    let audio = new Audio(`./sounds/wrongguess.mp3`); 
+    audio.play();
+}
+
+
 function setcurrentplayer(playername){
     const player = document.getElementById("playerName");
     player.innerText = playername;
+}
+
+function renderWord(word, definition) {
+    const wordContainer = document.getElementById("word");
+    const description = document.getElementById("definition");
+    wordContainer.innerHTML = '';
+    description.innerText = definition;
+
+    word.split('').forEach(() => {
+        const li = document.createElement('li');
+        li.textContent = '-';
+        wordContainer.appendChild(li);
+    });
 }
 
 socket.on("resetGame", () => {
@@ -175,25 +266,14 @@ function resetGame(){
     document.getElementById("playerName").innerText = "!hello yazarak başlayabilirsiniz!";
     document.getElementById("definition").innerText = ".....";
     
-    clearInterval(countdownTimer); 
-    document.getElementById("timer-bar").style.width = "0%"; 
+    clearInterval(countdownTimer);
+    document.getElementById("timer-bar").style.width = "0%";
     document.getElementById("timer-text").textContent = "";
-}
-
-function renderOpenChatWord(word) {
-    const openChatWordContainer = document.getElementById("openChatWord");
-    openChatWordContainer.innerHTML = '';
-
-    word.split('').forEach(() => {
-        const li = document.createElement('li');
-        li.textContent = '-';
-        openChatWordContainer.appendChild(li);
-    });
 }
 
 const openChatNotification = document.createElement('div');
 openChatNotification.classList.add("open-chat-notification");
-document.body.appendChild(openChatNotification); 
+document.body.appendChild(openChatNotification);
 
 function showOpenChatMode() {
     openChatNotification.innerHTML = `🚀 OpenChat Modu Açıldı! Herkes tahmin yapabilir.`;
