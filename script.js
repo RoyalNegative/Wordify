@@ -20,9 +20,9 @@ async function fetchLeaderboard() {
         const response = await fetch(`${BACKEND_URL}/leaderboard`);
         const data = await response.json();
         const leaderboardContainer = document.querySelector('.leaderboard');
-        leaderboardContainer.innerHTML = "<h3>LeaderBoard:</h3>";
+        leaderboardContainer.innerHTML = '<h3 class="leaderboard-title">LeaderBoard:</h3>';
         data.forEach(player => {
-            leaderboardContainer.innerHTML += `<p>${player.username}: ${player.score}</p>`;
+            leaderboardContainer.innerHTML += `<p class="leaderboard-playername">${player.username}: ${player.score}</p>`;
         });
     } catch (error) {
         console.error('Error fetching leaderboard:', error);
@@ -98,7 +98,7 @@ function setcurrentplayer(playername){
 }
 
 socket.on("resetGame", () => {
-    document.getElementById("playerName").innerText = "type !play / !play yazip oynayabilirsiniz!";
+    document.getElementById("playerName").innerText = "!hello yazarak başlayabilirsiniz!";
     document.getElementById("definition").innerText = ".....";
     
     clearInterval(countdownTimer); 

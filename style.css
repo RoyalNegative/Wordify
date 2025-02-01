@@ -109,10 +109,21 @@ body{
 .leaderboard{
     background: #FF5722;
     border-radius: 15px;
-    padding: 10px;
+    padding: 10px 20px;
     align-self: flex-start;
     position: fixed;
-    left: 8%;
+    left: 4%;
+    top: 2%;
+}
+
+.leaderboard-title{
+    text-transform: uppercase;
+    text-align: center;
+    font-size: 30px;
+}
+
+.leaderboard-playername{
+    font-size: 27px;
 }
 
 .description{
