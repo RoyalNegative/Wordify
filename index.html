@@ -1,42 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://use.typekit.net/ysg2zvi.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://use.typekit.net/ysg2zvi.css" />
     <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./style.css" />
     <title>Wordify</title>
-</head>
-<body>
+  </head>
+  <body>
     <header class="header">
-        <div class="logo-container">
-            <img src="./images/WordifyLogo.png" alt="WordifyLogo" width="500" height="auto">
-        </div>
+      <div class="logo-container">
+        <img
+          src="./images/WordifyLogo.png"
+          alt="WordifyLogo"
+          width="500"
+          height="auto"
+        />
+      </div>
     </header>
     <main class="main">
-        <section class="main-container">
-           <div class="content-container">
-                <div class="leaderboard">
-                    <h3 class="leaderboard-title"> LeaderBoard  <br/> COMING SOON</h3>        
-                </div>
-                <audio id="backgroundMusic" autoplay loop>
-                    <source src="./sounds/backgroundMusic.mp3" type="audio/mp3">
-                </audio>
-                <div class="timer-bar-container">
-                    <div class="timer-bar" id="timer-bar"></div>
-                    <p id="timer-text">40s</p>
-                </div>                
-                           
-                <h2 class="current-player"> Current player: <span id="playerName"> !hello yazarak başlayabilirsiniz!</span></h2>
-                <ul class="word" id="word">
-                    
-                </ul>
-                <h2 class="description" id="definition"> ..... </h2>
-           </div>
-        </section>
+      <section class="main-container">
+        <div class="content-container">
+          <div class="leaderboard">
+            <h3 class="leaderboard-title">
+              LeaderBoard <br />
+              COMING SOON
+            </h3>
+          </div>
+          <audio id="backgroundMusic" autoplay loop>
+            <source src="./sounds/backgroundMusic.mp3" type="audio/mp3" />
+          </audio>
+          <div class="timer-bar-container">
+            <div class="timer-bar" id="timer-bar"></div>
+            <p id="timer-text">40s</p>
+          </div>
+
+          <h2 class="current-player">
+            Current player:
+            <span id="playerName"> !hello yazarak başlayabilirsiniz!</span>
+          </h2>
+          <ul class="word" id="word"></ul>
+          <h2 class="description" id="definition">.....</h2>
+        </div>
+
+        <h1 id="countdownText" class="countdown-text"></h1>
+
+        <div id="openChatArea" class="open-chat-hidden">
+          <h2>🔴 OpenChat Modu Açık</h2>
+          <p>Herkes tahmin yapabilir!</p>
+          <ul class="word" id="openChatWord"></ul>
+        </div>
+      </section>
     </main>
-   
+
     <script src="./script.js"></script>
-</body>
+  </body>
 </html>

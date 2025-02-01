@@ -1,7 +1,42 @@
 const wordContainer = document.querySelector('.word');
-
 const BACKEND_URL = "https://api-wordify.com";
-const socket = io(BACKEND_URL); 
+const socket = io(BACKEND_URL);
+let openChatMode = false; 
+
+const openChatArea = document.getElementById("openChatArea");
+
+const countdownText = document.createElement("h1");
+countdownText.classList.add("countdown-text");
+document.body.appendChild(countdownText);
+
+socket.on("openChatMode", (data) => {
+    if (data.status) {
+        openChatArea.classList.add("open-chat-active");
+        setTimeout(() => {
+            window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+        }, 300);
+        startOpenChatCountdown();
+    } else {
+        openChatArea.classList.remove("open-chat-active");
+    }
+});
+
+function startOpenChatCountdown() {
+    let countdown = 5;
+    countdownText.innerText = countdown;
+    countdownText.style.display = "block";
+
+    const countdownInterval = setInterval(() => {
+        countdown--;
+        countdownText.innerText = countdown;
+
+        if (countdown === 0) {
+            clearInterval(countdownInterval);
+            countdownText.style.display = "none";
+            socket.emit("startOpenChatRound");
+        }
+    }, 1000);
+}
 
 socket.on("connect", () => {
     console.log("✅ Connected to server!");
@@ -66,16 +101,19 @@ function startCountdown() {
     }, 1000); 
 }
 
-
 socket.on("gameStart", (data) => {
     console.log(`🟢 Received gameStart event!`);
     console.log(`🔵 New player: ${data.playername}`);
     console.log(`🟡 Word received: ${data.word.word}`);
 
-    setcurrentplayer(data.playername);
-    renderWord(data.word.word);
-    playSound();
+    if (openChatMode) {
+        renderOpenChatWord(data.word.word);
+    } else {
+        setcurrentplayer(data.playername);
+        renderWord(data.word.word);
+    }
 
+    playSound();
     const descrip = document.getElementById("definition");
     if (descrip) {
         descrip.innerText = data.word.definition;
@@ -84,129 +122,90 @@ socket.on("gameStart", (data) => {
     startCountdown();
 });
 
+socket.on("openChatWinner", (data) => {
+    const openChatWordContainer = document.getElementById("openChatWord");
+    openChatWordContainer.innerHTML = ''; 
+
+    const winnerText = document.createElement("h2");
+    winnerText.innerText = `🎉 ${data.winner}`;
+    winnerText.classList.add("winner-reveal");
+    openChatWordContainer.appendChild(winnerText);
+
+    data.word.split('').forEach((char, index) => {
+        setTimeout(() => {
+            const li = document.createElement('li');
+            li.textContent = char;
+            li.classList.add("word-reveal");
+            openChatWordContainer.appendChild(li);
+        }, index * 300);
+    });
+
+    let blinkCount = 0;
+    const blinkInterval = setInterval(() => {
+        winnerText.style.backgroundColor = blinkCount % 2 === 0 ? 'green' : '';
+        openChatWordContainer.style.backgroundColor = blinkCount % 2 === 0 ? 'green' : '';
+        blinkCount++;
+        if (blinkCount === 6) {
+            clearInterval(blinkInterval);
+            winnerText.style.backgroundColor = '';
+            openChatWordContainer.style.backgroundColor = '';
+        }
+    }, 500);
+
+    setTimeout(() => {
+        winnerText.remove();
+    }, 3000);
+});
+
 function playSound() {
     let audio = new Audio(`/sounds/gamestart.ogg`); 
     audio.play();
 }
 
-
 function setcurrentplayer(playername){
     const player = document.getElementById("playerName");
     player.innerText = playername;
-    console.log(`player shown on screen`);
-
 }
 
 socket.on("resetGame", () => {
+   resetGame();
+});
+
+function resetGame(){
     document.getElementById("playerName").innerText = "!hello yazarak başlayabilirsiniz!";
     document.getElementById("definition").innerText = ".....";
     
     clearInterval(countdownTimer); 
     document.getElementById("timer-bar").style.width = "0%"; 
     document.getElementById("timer-text").textContent = "";
-
-    console.log(`Game reset.`);
-});
-
-
-socket.on("wrongGuess", () => {
-    console.log("Yanlis cevap");
-    playSoundWrongGuess();
-    const wordul = document.getElementById('word');
-    let blinkCount = 0;
-    const blinkInterval = setInterval(() => {
-        wordul.style.backgroundColor = blinkCount % 2 === 0 ? 'red' : '';
-        blinkCount++;
-        if (blinkCount === 2) {
-            clearInterval(blinkInterval);
-            wordul.style.backgroundColor = '';
-        }
-    }, 500);
-});
-
-function playSoundWrongGuess() {
-    let audio = new Audio(`./sounds/wrongguess.mp3`); 
-    audio.play();
 }
 
-socket.on("correctGuess", (data) => {
-    console.log("✅ Correct guess received! Revealing word.");
-    const wordul = document.getElementById('word');
-    let blinkCount = 0;
-    
-    const blinkInterval = setInterval(() => {
-        wordul.style.backgroundColor = blinkCount % 2 === 0 ? 'green' : '';
-        blinkCount++;
-        if (blinkCount === 6) {
-            clearInterval(blinkInterval);
-            wordul.style.backgroundColor = '';
-        }
-    }, 500);
-    revealWord(data.word);
-    
-    clearInterval(countdownTimer); 
-    document.getElementById("timer-bar").style.width = "0%";
-    document.getElementById("timer-text").textContent = "";
-});
-
-function playSoundCorrectGuess() {
-    let audio = new Audio(`./sounds/correctguess.mp3`); 
-    audio.play();
-};
-
-function revealWord(word) {
-    const wordContainer = document.querySelector('.word');
-    wordContainer.innerHTML = ''; 
-
-    word.split('').forEach((char, index) => {
-        setTimeout(() => {
-            const li = document.createElement('li');
-            li.textContent = char;  
-            wordContainer.appendChild(li);
-        }, index * 300); 
-    });
-}
-
-
-
-async function fetchRandomWord() {
-    try {
-        const response = await fetch(`${BACKEND_URL}/random-word`); 
-        const data = await response.json(); 
-
-        if(data.word){
-            const word = data.word; 
-            const definition = data.definition;
-            
-            
-            const descrip = document.getElementById("definition");
-            if (descrip) {
-                descrip.innerText = definition;
-            }
-            renderWord(word); 
-            
-        }
-        else{
-            const screenword = document.getElementById("word");
-            screenword.innerHTML = "<li> type !play to get a word! </li>";
-        }
-    } catch (error) {
-        console.error('Error fetching random word:', error);
-    }
-}
-
-
-function renderWord(word) {
-    const wordContainer = document.querySelector('.word');
-    if (!wordContainer) return;
-    wordContainer.innerHTML = ''; 
+function renderOpenChatWord(word) {
+    const openChatWordContainer = document.getElementById("openChatWord");
+    openChatWordContainer.innerHTML = '';
 
     word.split('').forEach(() => {
         const li = document.createElement('li');
-        li.textContent = '-'; 
-        wordContainer.appendChild(li);
+        li.textContent = '-';
+        openChatWordContainer.appendChild(li);
     });
 }
 
+const openChatNotification = document.createElement('div');
+openChatNotification.classList.add("open-chat-notification");
+document.body.appendChild(openChatNotification); 
 
+function showOpenChatMode() {
+    openChatNotification.innerHTML = `🚀 OpenChat Modu Açıldı! Herkes tahmin yapabilir.`;
+    openChatNotification.style.display = "block";
+    wordContainer.style.fontSize = "100px";
+    fetchRandomWord();
+}
 
+function hideOpenChatMode() {
+    openChatNotification.innerHTML = `🔒 OpenChat Modu Kapatıldı.`;
+    setTimeout(() => {
+        openChatNotification.style.display = "none";
+    }, 3000);
+    wordContainer.innerHTML = "";
+}
