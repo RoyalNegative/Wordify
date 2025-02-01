@@ -74,6 +74,7 @@ socket.on("gameStart", (data) => {
 
     setcurrentplayer(data.playername);
     renderWord(data.word.word);
+    playSound();
 
     const descrip = document.getElementById("definition");
     if (descrip) {
@@ -82,6 +83,11 @@ socket.on("gameStart", (data) => {
 
     startCountdown();
 });
+
+function playSound() {
+    let audio = new Audio(`/sounds/gamestart.ogg`); 
+    audio.play();
+}
 
 
 function setcurrentplayer(playername){
@@ -105,6 +111,7 @@ socket.on("resetGame", () => {
 
 socket.on("wrongGuess", () => {
     console.log("Yanlis cevap");
+    playSoundWrongGuess();
     const wordul = document.getElementById('word');
     let blinkCount = 0;
     const blinkInterval = setInterval(() => {
@@ -117,10 +124,16 @@ socket.on("wrongGuess", () => {
     }, 500);
 });
 
+function playSoundWrongGuess() {
+    let audio = new Audio(`./sounds/wrongguess.mp3`); 
+    audio.play();
+}
+
 socket.on("correctGuess", (data) => {
     console.log("✅ Correct guess received! Revealing word.");
     const wordul = document.getElementById('word');
     let blinkCount = 0;
+    
     const blinkInterval = setInterval(() => {
         wordul.style.backgroundColor = blinkCount % 2 === 0 ? 'green' : '';
         blinkCount++;
@@ -135,6 +148,11 @@ socket.on("correctGuess", (data) => {
     document.getElementById("timer-bar").style.width = "0%";
     document.getElementById("timer-text").textContent = "";
 });
+
+function playSoundCorrectGuess() {
+    let audio = new Audio(`./sounds/correctguess.mp3`); 
+    audio.play();
+};
 
 
 
