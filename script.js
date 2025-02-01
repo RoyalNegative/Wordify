@@ -154,9 +154,6 @@ function playSoundCorrectGuess() {
     audio.play();
 };
 
-
-
-
 function revealWord(word) {
     const wordContainer = document.querySelector('.word');
     wordContainer.innerHTML = ''; 
