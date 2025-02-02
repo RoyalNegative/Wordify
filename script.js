@@ -11,30 +11,7 @@ const countdownText = document.createElement("h1");
 countdownText.classList.add("countdown-text");
 document.body.appendChild(countdownText);
 
-// function sayfayiassagikaydir(){
-//     openChatArea.style.display = "flex";
-//     openChatArea.classList.add("open-chat-active");
 
-//         // Sayfayı aşağı kaydır (OpenChat alanına)
-//         setTimeout(() => {
-//             window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-//         }, 300);
-
-//         // Bildirimi göster
-//         openChatNotification.innerText = `🚀 OpenChat Modu Açıldı! Herkes tahmin yapabilir.`;
-//         openChatNotification.style.backgroundColor = "red";
-//         openChatNotification.style.display = "block";
-
-//         // OpenChat alanını düzgün göstermek için animasyonu tetikle
-//         openChatArea.style.bottom = "0";
-
-//         // 3 saniye sonra bildirimi yavaşça kaybolacak
-//         setTimeout(() => {
-//             openChatNotification.style.display = "none";
-//         }, 3000);
-
-//         startOpenChatCountdown();
-// }
 socket.on("openChatMode", (data) => {
   console.log("Received openChatMode event:", data); // Gelen veriyi logla
 
