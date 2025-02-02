@@ -22,8 +22,8 @@ body{
     display: flex;
     flex-direction: column;
     background-color: var(--background-color);
-    overflow: auto; /* Keeps scrolling */
-    scrollbar-width: none; /* Hides scrollbar in Firefox */
+    overflow: auto; 
+    scrollbar-width: none; 
     overflow: hidden;
 }
 
@@ -37,7 +37,7 @@ body::-webkit-scrollbar {
 
 .timer-bar-container {
     width: 60%; /* Adjust width */
-    height: 20px;
+    height: 40px;
     background-color: #ddd;
     border-radius: 10px;
     overflow: hidden;
@@ -58,7 +58,7 @@ body::-webkit-scrollbar {
     text-align: center;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 16px;
+    font-size: 20px;
     font-weight: bold;
     color: black;
     z-index: 804;
@@ -174,8 +174,6 @@ body::-webkit-scrollbar {
     left: 0;
     transition: bottom 5s ease-in-out; 
     z-index: 600;
-    
-
 }
 
 
