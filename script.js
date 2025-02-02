@@ -113,7 +113,7 @@ async function fetchLeaderboard() {
 
     const leaderboardContainer = document.querySelector(".leaderboard");
     leaderboardContainer.innerHTML =
-      '<h3 class="leaderboard-title">LeaderBoard:</h3>';
+      '<h3 class="leaderboard-title">LeaderBoard</h3>';
 
     data.forEach((player) => {
       leaderboardContainer.innerHTML += `<p class="leaderboard-playername">${player.Name || "Unknown"}: ${player.Score || 0}</p>`;

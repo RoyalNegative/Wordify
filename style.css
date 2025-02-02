@@ -118,12 +118,12 @@ body::-webkit-scrollbar {
 }
 
 .leaderboard{
-    background: #FF5722;
+    background: var(--background-color);
     border-radius: 15px;
     padding: 10px 20px;
     align-self: flex-start;
     position: fixed;
-    left: 4%;
+    left: 0.5%;
     top: 2%;
     z-index: 999;
 }
