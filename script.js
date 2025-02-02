@@ -126,7 +126,8 @@ let countdownTimer;
 let timeLeft = 40;
 
 function startCountdown() {
-  clearInterval(countdownTimer); // Stop any previous timers
+  console.log("geri sayim basladi");
+  clearInterval(countdownTimer); 
   timeLeft = 40;
 
   const timerText = document.getElementById("timer-text");
@@ -173,59 +174,18 @@ socket.on("gameStart", (data) => {
     setcurrentplayer(data.playername);
     renderWord(data.word.word, data.word.definition);
   }
-  // ✅ MODERATOR KONTROLÜ ile !openchat KOMUTU
-  if (command === "!openchat") {
-    if (tags.mod || tags.badges?.broadcaster) {
-      if (!openChatMode) {
-        openChatMode = true;
-        io.emit("openChatMode", { status: true });
-        twitchClient.say(
-          channel,
-          `🚀 OpenChat Modu **Moderator** tarafından açıldı! Herkes tahmin yapabilir!`
-        );
-      } else {
-        twitchClient.say(channel, `⚠️ OpenChat Modu zaten açık!`);
-      }
-    } else {
-      twitchClient.say(
-        channel,
-        `❌ Bu komutu yalnızca **moderatorler** kullanabilir!`
-      );
-    }
-  }
 
-  if (command === "!closechat") {
-    if (tags.mod || tags.badges?.broadcaster) {
-      if (openChatMode) {
-        openChatMode = false;
-        io.emit("openChatMode", { status: false });
-        twitchClient.say(
-          channel,
-          `🔒 OpenChat Modu **Moderator** tarafından kapatıldı!`
-        );
-      } else {
-        twitchClient.say(channel, `⚠️ OpenChat Modu zaten kapalı!`);
-      }
-    } else {
-      twitchClient.say(
-        channel,
-        `❌ Bu komutu yalnızca **moderatorler** kullanabilir!`
-      );
-    }
-  }
-  playSound();
+  playGameStartSound();
   startCountdown();
 });
+
 
 socket.on("correctGuess", (data) => {
   console.log("✅ Correct guess received! Revealing word.");
   correctGuessSound();
 
-  
   const wordContainer = document.getElementById("word");
   wordContainer.innerHTML = "";
-  
-
   
   data.word.split("").forEach((char, index) => {
     setTimeout(() => {
@@ -236,7 +196,7 @@ socket.on("correctGuess", (data) => {
     }, index * 300);
   });
 
-  // Arkaya yeşil yanıp sönme efekti
+  
   let blinkCount = 0;
   const blinkInterval = setInterval(() => {
     wordContainer.style.backgroundColor = blinkCount % 2 === 0 ? "green" : "";
