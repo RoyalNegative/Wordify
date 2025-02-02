@@ -109,16 +109,20 @@ async function fetchLeaderboard() {
   try {
     const response = await fetch(`${BACKEND_URL}/leaderboard`);
     const data = await response.json();
+    console.log("📊 Gelen Leaderboard Verisi:", data); 
+
     const leaderboardContainer = document.querySelector(".leaderboard");
     leaderboardContainer.innerHTML =
       '<h3 class="leaderboard-title">LeaderBoard:</h3>';
+
     data.forEach((player) => {
-      leaderboardContainer.innerHTML += `<p class="leaderboard-playername">${player.username}: ${player.score}</p>`;
+      leaderboardContainer.innerHTML += `<p class="leaderboard-playername">${player.Name || "Unknown"}: ${player.Score || 0}</p>`;
     });
   } catch (error) {
-    console.error("Error fetching leaderboard:", error);
+    console.error("⚠️ Leaderboard çekme hatası:", error);
   }
 }
+
 
 setInterval(fetchLeaderboard, 5000);
 
