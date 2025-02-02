@@ -2,6 +2,8 @@ const wordContainer = document.querySelector(".word");
 const BACKEND_URL = "https://api-wordify.com";
 const socket = io(BACKEND_URL);
 let openChatMode = false;
+const Correctguessaudio = new Audio(`./sounds/correctguess.mp3`);
+const GameStartaudio = new Audio(`./sounds/gamestart.ogg`);
 
 const openChatArea = document.getElementById("openChatArea");
 
@@ -147,7 +149,7 @@ let countdownTimer;
 let timeLeft = 40;
 
 function startCountdown() {
-  clearInterval(countdownTimer);
+  clearInterval(countdownTimer); // Stop any previous timers
   timeLeft = 40;
 
   const timerText = document.getElementById("timer-text");
@@ -158,6 +160,7 @@ function startCountdown() {
     return;
   }
 
+  // Reset initial values
   timerText.textContent = `${timeLeft}s`;
   timerBar.style.width = "100%";
 
@@ -168,6 +171,8 @@ function startCountdown() {
 
     let progress = (timeLeft / 40) * 100;
     timerBar.style.width = `${progress}%`;
+
+    // ✅ Update text countdown
     timerText.textContent = `${timeLeft}s`;
 
     if (timeLeft <= 0) {
@@ -178,6 +183,7 @@ function startCountdown() {
   }, 1000);
 }
 
+
 socket.on("gameStart", (data) => {
   console.log(`🟢 Received gameStart event!`);
   console.log(`🔵 New player: ${data.playername}`);
@@ -186,6 +192,7 @@ socket.on("gameStart", (data) => {
   if (openChatMode) {
     renderOpenChatWord(data.word.word);
   } else {
+    GameStartaudio();
     setcurrentplayer(data.playername);
     renderWord(data.word.word, data.word.definition);
   }
@@ -210,7 +217,6 @@ socket.on("gameStart", (data) => {
     }
   }
 
-  // ✅ !closechat KOMUTU (Moderatorler için)
   if (command === "!closechat") {
     if (tags.mod || tags.badges?.broadcaster) {
       if (openChatMode) {
@@ -236,11 +242,14 @@ socket.on("gameStart", (data) => {
 
 socket.on("correctGuess", (data) => {
   console.log("✅ Correct guess received! Revealing word.");
+  correctGuessSound();
 
+  
   const wordContainer = document.getElementById("word");
   wordContainer.innerHTML = "";
+  
 
-  // Kelimeyi harf harf ekrana getir
+  
   data.word.split("").forEach((char, index) => {
     setTimeout(() => {
       const li = document.createElement("li");
@@ -266,9 +275,12 @@ socket.on("correctGuess", (data) => {
   document.getElementById("timer-text").textContent = "";
 });
 
-function playSound() {
-  let audio = new Audio(`/sounds/gamestart.ogg`);
-  audio.play();
+function correctGuessSound(){
+  Correctguessaudio.play();
+}
+
+function playGameStartSound() {
+  GameStartaudio.play();
 }
 
 socket.on("wrongGuess", () => {

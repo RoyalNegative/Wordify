@@ -43,7 +43,6 @@ body::-webkit-scrollbar {
     overflow: hidden;
     position: relative;
     margin-top: 20px;
-    z-index: 800;
 }
 
 .timer-bar {
@@ -51,7 +50,6 @@ body::-webkit-scrollbar {
     height: 100%;
     background-color: green;
     transition: width linear;
-    z-index: 800;
 }
 
 #timer-text {
@@ -63,7 +61,7 @@ body::-webkit-scrollbar {
     font-size: 16px;
     font-weight: bold;
     color: black;
-    z-index: 800;
+    z-index: 804;
 }
 
 
