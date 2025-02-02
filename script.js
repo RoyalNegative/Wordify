@@ -250,6 +250,10 @@ socket.on("correctGuess", (data) => {
   clearInterval(countdownTimer);
   document.getElementById("timer-bar").style.width = "0%";
   document.getElementById("timer-text").textContent = "";
+
+  setTimeout(() => {
+    resetGame();
+  }, 5000);
 });
 
 function correctGuessSound(){
@@ -298,6 +302,7 @@ function renderWord(word, definition) {
     li.textContent = "-";
     wordContainer.appendChild(li);
   });
+
 }
 
 socket.on("resetGame", () => {
