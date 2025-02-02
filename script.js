@@ -169,7 +169,7 @@ socket.on("gameStart", (data) => {
   if (openChatMode) {
     renderOpenChatWord(data.word.word);
   } else {
-    GameStartaudio();
+    playGameStartSound();
     setcurrentplayer(data.playername);
     renderWord(data.word.word, data.word.definition);
   }
