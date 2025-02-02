@@ -22,6 +22,13 @@ body{
     display: flex;
     flex-direction: column;
     background-color: var(--background-color);
+    overflow: auto; /* Keeps scrolling */
+    scrollbar-width: none; /* Hides scrollbar in Firefox */
+    overflow: hidden;
+}
+
+body::-webkit-scrollbar {
+    display: none; /* Hides scrollbar in Chrome, Safari */
 }
 
 .main{
@@ -72,8 +79,10 @@ body{
     width: 100%;
     text-align: center;
     position: fixed;
-    top: 2%;
+    top: 0;
+    padding: 2%;
     background-color: var(--background-color);
+    z-index: 998;
 }
 
 
@@ -83,7 +92,7 @@ body{
     font-style: normal;
     font-size: 100px;
     color: purple;
-    z-index: 999;
+    z-index: 998;
 }
 
 
@@ -118,16 +127,19 @@ body{
     position: fixed;
     left: 4%;
     top: 2%;
+    z-index: 999;
 }
 
 .leaderboard-title{
     text-transform: uppercase;
     text-align: center;
     font-size: 30px;
+    font-weight: 700;
 }
 
 .leaderboard-playername{
     font-size: 27px;
+    font-weight: 500;
 }
 
 .description{
@@ -143,10 +155,16 @@ body{
     font-size: 200px;
 }
 
+.transitionPurpleRed{
+    width: 100%;
+    height: 1000px;
+    background: linear-gradient(to bottom, purple, red); 
+}
+
 #openChatArea {
     width: 100%;
-    height: 250px; /* OpenChat alanı biraz daha geniş olsun */
-    display: flex;
+    height: 900px;
+    display: none;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -154,16 +172,17 @@ body{
     color: white;
     font-size: 24px;
     font-weight: bold;
-    background: linear-gradient(to bottom, purple, red); /* Mor → Kırmızı geçiş */
-    position: absolute;
-    bottom: -250px; /* Başlangıçta gizli */
+    background: red;
     left: 0;
-    transition: bottom 0.7s ease-in-out; /* Daha yumuşak animasyon */
+    transition: bottom 5s ease-in-out; 
+    z-index: 600;
+    
+
 }
 
-/* OpenChat açıldığında ekran aşağı kayacak */
+
 .open-chat-active {
-    bottom: 0; /* OpenChat aktifken yukarı çıksın */
+    bottom: 0; 
 }
 
 #openChatWord {
@@ -181,14 +200,14 @@ body{
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 80px;
+    font-size: 200px;
     font-weight: bold;
     color: white;
     background: rgba(0, 0, 0, 0.7);
     padding: 20px 40px;
     border-radius: 10px;
-    display: none;
     z-index: 1000;
+    display: none;
 }
 
 

@@ -1,7 +1,7 @@
-const wordContainer = document.querySelector('.word');
+const wordContainer = document.querySelector(".word");
 const BACKEND_URL = "https://api-wordify.com";
 const socket = io(BACKEND_URL);
-let openChatMode = false; 
+let openChatMode = false;
 
 const openChatArea = document.getElementById("openChatArea");
 
@@ -9,283 +9,337 @@ const countdownText = document.createElement("h1");
 countdownText.classList.add("countdown-text");
 document.body.appendChild(countdownText);
 
+// function sayfayiassagikaydir(){
+//     openChatArea.style.display = "flex";
+//     openChatArea.classList.add("open-chat-active");
+
+//         // Sayfayı aşağı kaydır (OpenChat alanına)
+//         setTimeout(() => {
+//             window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+//         }, 300);
+
+//         // Bildirimi göster
+//         openChatNotification.innerText = `🚀 OpenChat Modu Açıldı! Herkes tahmin yapabilir.`;
+//         openChatNotification.style.backgroundColor = "red";
+//         openChatNotification.style.display = "block";
+
+//         // OpenChat alanını düzgün göstermek için animasyonu tetikle
+//         openChatArea.style.bottom = "0";
+
+//         // 3 saniye sonra bildirimi yavaşça kaybolacak
+//         setTimeout(() => {
+//             openChatNotification.style.display = "none";
+//         }, 3000);
+
+//         startOpenChatCountdown();
+// }
 socket.on("openChatMode", (data) => {
-    openChatMode = data.status;
-    
-    const openChatNotification = document.getElementById("openChatNotification");
-    if (!openChatNotification) return;
+  console.log("Received openChatMode event:", data); // Gelen veriyi logla
 
-    if (openChatMode) {
-        openChatArea.classList.add("open-chat-active");
+  openChatMode = data.status;
+  console.log("Updated openChatMode:", openChatMode); // Güncellenmiş durumu kontrol et
 
-        // Sayfayı aşağı kaydır (OpenChat alanına)
-        setTimeout(() => {
-            window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-        }, 300);
+  const openChatNotification = document.getElementById("openChatNotification");
+  if (!openChatNotification) {
+    console.error("Error: #openChatNotification element not found!");
+    return;
+  }
 
-        // Bildirimi göster
-        openChatNotification.innerText = `🚀 OpenChat Modu Açıldı! Herkes tahmin yapabilir.`;
-        openChatNotification.style.backgroundColor = "red";
-        openChatNotification.style.display = "block";
+  const openChatArea = document.getElementById("openChatArea");
+  if (!openChatArea) {
+    console.error("Error: #openChatArea element not found!");
+    return;
+  }
 
-        // OpenChat alanını düzgün göstermek için animasyonu tetikle
-        openChatArea.style.bottom = "0";
+  if (openChatMode) {
+    console.log("OpenChat Mode is being activated...");
 
-        // 3 saniye sonra bildirimi yavaşça kaybolacak
-        setTimeout(() => {
-            openChatNotification.style.display = "none";
-        }, 3000);
+    openChatArea.style.display = "flex";
+    openChatArea.classList.add("open-chat-active");
 
-        startOpenChatCountdown();  // OpenChat açıldığında geri sayımı başlat
+    setTimeout(() => {
+      console.log("Scrolling to bottom...");
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    }, 300);
+
+    openChatNotification.innerText = `🚀 OpenChat Modu Açıldı! Herkes tahmin yapabilir.`;
+    openChatNotification.style.backgroundColor = "red";
+    openChatNotification.style.display = "block";
+
+    openChatArea.style.bottom = "0";
+
+    setTimeout(() => {
+      console.log("Hiding openChatNotification...");
+      openChatNotification.style.display = "none";
+    }, 3000);
+
+    if (typeof startOpenChatCountdown === "function") {
+      console.log("Starting OpenChat Countdown...");
+      startOpenChatCountdown();
     } else {
-        openChatArea.classList.remove("open-chat-active");
-
-        // OpenChat kapandı bildirimini göster
-        openChatNotification.innerText = `🔒 OpenChat Modu Kapatıldı!`;
-        openChatNotification.style.backgroundColor = "black";
-        openChatNotification.style.display = "block";
-
-        // OpenChat alanını geri gizle
-        openChatArea.style.bottom = "-250px";
-
-        setTimeout(() => {
-            openChatNotification.style.display = "none";
-        }, 3000);
+      console.error("Error: startOpenChatCountdown function is not defined!");
     }
+  } else {
+    console.log("OpenChat Mode is being deactivated...");
+
+    openChatArea.classList.remove("open-chat-active");
+
+    openChatNotification.innerText = `🔒 OpenChat Modu Kapatıldı!`;
+    openChatNotification.style.backgroundColor = "black";
+    openChatNotification.style.display = "block";
+
+    openChatArea.style.bottom = "-250px";
+
+    setTimeout(() => {
+      console.log("Hiding openChatNotification...");
+      openChatNotification.style.display = "none";
+    }, 3000);
+  }
 });
 
-
 function startOpenChatCountdown() {
-    let countdown = 5;
+  let countdown = 10;
+  countdownText.innerText = countdown;
+  countdownText.style.display = "block";
+
+  const countdownInterval = setInterval(() => {
+    countdown--;
     countdownText.innerText = countdown;
-    countdownText.style.display = "block";
 
-    const countdownInterval = setInterval(() => {
-        countdown--;
-        countdownText.innerText = countdown;
-
-        if (countdown === 0) {
-            clearInterval(countdownInterval);
-            countdownText.style.display = "none";
-            socket.emit("startOpenChatRound");
-        }
-    }, 1000);
+    if (countdown === 0) {
+      clearInterval(countdownInterval);
+      countdownText.style.display = "none";
+      socket.emit("startOpenChatRound");
+    }
+  }, 1000);
 }
 
 socket.on("connect", () => {
-    console.log("✅ Connected to server!");
+  console.log("✅ Connected to server!");
 });
 
 socket.on("disconnect", () => {
-    console.warn("❌ Disconnected from server. Trying to reconnect...");
+  console.warn("❌ Disconnected from server. Trying to reconnect...");
 });
 
 socket.on("connect_error", (error) => {
-    console.error("⚠️ Socket connection error:", error);
+  console.error("⚠️ Socket connection error:", error);
 });
 
 async function fetchLeaderboard() {
-    try {
-        const response = await fetch(`${BACKEND_URL}/leaderboard`);
-        const data = await response.json();
-        const leaderboardContainer = document.querySelector('.leaderboard');
-        leaderboardContainer.innerHTML = '<h3 class="leaderboard-title">LeaderBoard:</h3>';
-        data.forEach(player => {
-            leaderboardContainer.innerHTML += `<p class="leaderboard-playername">${player.username}: ${player.score}</p>`;
-        });
-    } catch (error) {
-        console.error('Error fetching leaderboard:', error);
-    }
+  try {
+    const response = await fetch(`${BACKEND_URL}/leaderboard`);
+    const data = await response.json();
+    const leaderboardContainer = document.querySelector(".leaderboard");
+    leaderboardContainer.innerHTML =
+      '<h3 class="leaderboard-title">LeaderBoard:</h3>';
+    data.forEach((player) => {
+      leaderboardContainer.innerHTML += `<p class="leaderboard-playername">${player.username}: ${player.score}</p>`;
+    });
+  } catch (error) {
+    console.error("Error fetching leaderboard:", error);
+  }
 }
 
 setInterval(fetchLeaderboard, 5000);
 
-let countdownTimer;  
-let timeLeft = 40;   
+let countdownTimer;
+let timeLeft = 40;
 
 function startCountdown() {
-    clearInterval(countdownTimer);  
-    timeLeft = 40; 
+  clearInterval(countdownTimer);
+  timeLeft = 40;
 
-    const timerText = document.getElementById("timer-text");  
-    const timerBar = document.getElementById("timer-bar");
+  const timerText = document.getElementById("timer-text");
+  const timerBar = document.getElementById("timer-bar");
 
-    if (!timerBar || !timerText) {
-        console.log("Timer elements not found!");
-        return;
-    }
+  if (!timerBar || !timerText) {
+    console.log("Timer elements not found!");
+    return;
+  }
 
+  timerText.textContent = `${timeLeft}s`;
+  timerBar.style.width = "100%";
+
+  let startTime = Date.now();
+  countdownTimer = setInterval(() => {
+    let elapsed = Math.floor((Date.now() - startTime) / 1000);
+    timeLeft = 40 - elapsed;
+
+    let progress = (timeLeft / 40) * 100;
+    timerBar.style.width = `${progress}%`;
     timerText.textContent = `${timeLeft}s`;
-    timerBar.style.width = "100%"; 
 
-    let startTime = Date.now();
-    countdownTimer = setInterval(() => {
-        let elapsed = Math.floor((Date.now() - startTime) / 1000);
-        timeLeft = 40 - elapsed;  
-
-        let progress = (timeLeft / 40) * 100;
-        timerBar.style.width = `${progress}%`;
-        timerText.textContent = `${timeLeft}s`;
-
-        if (timeLeft <= 0) {
-            clearInterval(countdownTimer); 
-            timerText.textContent = `⏳ Time's up!`;
-            timerBar.style.width = "0%";
-        }
-    }, 1000); 
+    if (timeLeft <= 0) {
+      clearInterval(countdownTimer);
+      timerText.textContent = `⏳ Time's up!`;
+      timerBar.style.width = "0%";
+    }
+  }, 1000);
 }
 
 socket.on("gameStart", (data) => {
-    console.log(`🟢 Received gameStart event!`);
-    console.log(`🔵 New player: ${data.playername}`);
-    console.log(`🟡 Word received: ${data.word.word}`);
+  console.log(`🟢 Received gameStart event!`);
+  console.log(`🔵 New player: ${data.playername}`);
+  console.log(`🟡 Word received: ${data.word.word}`);
 
-    if (openChatMode) {
-        renderOpenChatWord(data.word.word);
+  if (openChatMode) {
+    renderOpenChatWord(data.word.word);
+  } else {
+    setcurrentplayer(data.playername);
+    renderWord(data.word.word, data.word.definition);
+  }
+  // ✅ MODERATOR KONTROLÜ ile !openchat KOMUTU
+  if (command === "!openchat") {
+    if (tags.mod || tags.badges?.broadcaster) {
+      if (!openChatMode) {
+        openChatMode = true;
+        io.emit("openChatMode", { status: true });
+        twitchClient.say(
+          channel,
+          `🚀 OpenChat Modu **Moderator** tarafından açıldı! Herkes tahmin yapabilir!`
+        );
+      } else {
+        twitchClient.say(channel, `⚠️ OpenChat Modu zaten açık!`);
+      }
     } else {
-        setcurrentplayer(data.playername);
-        renderWord(data.word.word, data.word.definition);
+      twitchClient.say(
+        channel,
+        `❌ Bu komutu yalnızca **moderatorler** kullanabilir!`
+      );
     }
- // ✅ MODERATOR KONTROLÜ ile !openchat KOMUTU
- if (command === "!openchat") {
-    if (tags.mod || tags.badges?.broadcaster) { 
-        if (!openChatMode) {
-            openChatMode = true;
-            io.emit("openChatMode", { status: true });
-            twitchClient.say(channel, `🚀 OpenChat Modu **Moderator** tarafından açıldı! Herkes tahmin yapabilir!`);
-        } else {
-            twitchClient.say(channel, `⚠️ OpenChat Modu zaten açık!`);
-        }
-    } else {
-        twitchClient.say(channel, `❌ Bu komutu yalnızca **moderatorler** kullanabilir!`);
-    }
-}
+  }
 
-// ✅ !closechat KOMUTU (Moderatorler için)
-if (command === "!closechat") {
-    if (tags.mod || tags.badges?.broadcaster) { 
-        if (openChatMode) {
-            openChatMode = false;
-            io.emit("openChatMode", { status: false });
-            twitchClient.say(channel, `🔒 OpenChat Modu **Moderator** tarafından kapatıldı!`);
-        } else {
-            twitchClient.say(channel, `⚠️ OpenChat Modu zaten kapalı!`);
-        }
+  // ✅ !closechat KOMUTU (Moderatorler için)
+  if (command === "!closechat") {
+    if (tags.mod || tags.badges?.broadcaster) {
+      if (openChatMode) {
+        openChatMode = false;
+        io.emit("openChatMode", { status: false });
+        twitchClient.say(
+          channel,
+          `🔒 OpenChat Modu **Moderator** tarafından kapatıldı!`
+        );
+      } else {
+        twitchClient.say(channel, `⚠️ OpenChat Modu zaten kapalı!`);
+      }
     } else {
-        twitchClient.say(channel, `❌ Bu komutu yalnızca **moderatorler** kullanabilir!`);
+      twitchClient.say(
+        channel,
+        `❌ Bu komutu yalnızca **moderatorler** kullanabilir!`
+      );
     }
-}
-    playSound();
-    startCountdown();
+  }
+  playSound();
+  startCountdown();
 });
 
 socket.on("correctGuess", (data) => {
-    console.log("✅ Correct guess received! Revealing word.");
-    
-    const wordContainer = document.getElementById("word");
-    wordContainer.innerHTML = '';
+  console.log("✅ Correct guess received! Revealing word.");
 
-    // Kelimeyi harf harf ekrana getir
-    data.word.split('').forEach((char, index) => {
-        setTimeout(() => {
-            const li = document.createElement('li');
-            li.textContent = char;
-            li.classList.add("word-reveal");
-            wordContainer.appendChild(li);
-        }, index * 300);
-    });
+  const wordContainer = document.getElementById("word");
+  wordContainer.innerHTML = "";
 
-    // Arkaya yeşil yanıp sönme efekti
-    let blinkCount = 0;
-    const blinkInterval = setInterval(() => {
-        wordContainer.style.backgroundColor = blinkCount % 2 === 0 ? 'green' : '';
-        blinkCount++;
-        if (blinkCount === 3) {
-            clearInterval(blinkInterval);
-            wordContainer.style.backgroundColor = '';
-        }
-    }, 1000);
+  // Kelimeyi harf harf ekrana getir
+  data.word.split("").forEach((char, index) => {
+    setTimeout(() => {
+      const li = document.createElement("li");
+      li.textContent = char;
+      li.classList.add("word-reveal");
+      wordContainer.appendChild(li);
+    }, index * 300);
+  });
 
-    clearInterval(countdownTimer);
-    document.getElementById("timer-bar").style.width = "0%";
-    document.getElementById("timer-text").textContent = "";
+  // Arkaya yeşil yanıp sönme efekti
+  let blinkCount = 0;
+  const blinkInterval = setInterval(() => {
+    wordContainer.style.backgroundColor = blinkCount % 2 === 0 ? "green" : "";
+    blinkCount++;
+    if (blinkCount === 3) {
+      clearInterval(blinkInterval);
+      wordContainer.style.backgroundColor = "";
+    }
+  }, 1000);
+
+  clearInterval(countdownTimer);
+  document.getElementById("timer-bar").style.width = "0%";
+  document.getElementById("timer-text").textContent = "";
 });
 
 function playSound() {
-    let audio = new Audio(`/sounds/gamestart.ogg`); 
-    audio.play();
+  let audio = new Audio(`/sounds/gamestart.ogg`);
+  audio.play();
 }
 
-
 socket.on("wrongGuess", () => {
-    console.log("❌ Yanlış tahmin!");
-    playSoundWrongGuess();
+  console.log("❌ Yanlış tahmin!");
+  playSoundWrongGuess();
 
-    const wordContainer = document.getElementById("word"); 
-    let blinkCount = 0;
+  const wordContainer = document.getElementById("word");
+  let blinkCount = 0;
 
-    const blinkInterval = setInterval(() => {
-        wordContainer.style.backgroundColor = blinkCount % 2 === 0 ? 'red' : '';
-        blinkCount++;
-        if (blinkCount === 3) {
-            clearInterval(blinkInterval);
-            wordContainer.style.backgroundColor = '';
-        }
-    }, 700);
+  const blinkInterval = setInterval(() => {
+    wordContainer.style.backgroundColor = blinkCount % 2 === 0 ? "red" : "";
+    blinkCount++;
+    if (blinkCount === 3) {
+      clearInterval(blinkInterval);
+      wordContainer.style.backgroundColor = "";
+    }
+  }, 700);
 });
 
 function playSoundWrongGuess() {
-    let audio = new Audio(`./sounds/wrongguess.mp3`); 
-    audio.play();
+  let audio = new Audio(`./sounds/wrongguess.mp3`);
+  audio.play();
 }
 
-
-function setcurrentplayer(playername){
-    const player = document.getElementById("playerName");
-    player.innerText = playername;
+function setcurrentplayer(playername) {
+  const player = document.getElementById("playerName");
+  player.innerText = playername;
 }
 
 function renderWord(word, definition) {
-    const wordContainer = document.getElementById("word");
-    const description = document.getElementById("definition");
-    wordContainer.innerHTML = '';
-    description.innerText = definition;
+  const wordContainer = document.getElementById("word");
+  const description = document.getElementById("definition");
+  wordContainer.innerHTML = "";
+  description.innerText = definition;
 
-    word.split('').forEach(() => {
-        const li = document.createElement('li');
-        li.textContent = '-';
-        wordContainer.appendChild(li);
-    });
+  word.split("").forEach(() => {
+    const li = document.createElement("li");
+    li.textContent = "-";
+    wordContainer.appendChild(li);
+  });
 }
 
 socket.on("resetGame", () => {
-   resetGame();
+  resetGame();
 });
 
-function resetGame(){
-    document.getElementById("playerName").innerText = "!hello yazarak başlayabilirsiniz!";
-    document.getElementById("definition").innerText = ".....";
-    
-    clearInterval(countdownTimer);
-    document.getElementById("timer-bar").style.width = "0%";
-    document.getElementById("timer-text").textContent = "";
+function resetGame() {
+  document.getElementById("playerName").innerText =
+    "!hello yazarak başlayabilirsiniz!";
+  document.getElementById("definition").innerText = ".....";
+
+  clearInterval(countdownTimer);
+  document.getElementById("timer-bar").style.width = "0%";
+  document.getElementById("timer-text").textContent = "";
 }
 
-const openChatNotification = document.createElement('div');
+const openChatNotification = document.createElement("div");
 openChatNotification.classList.add("open-chat-notification");
 document.body.appendChild(openChatNotification);
 
 function showOpenChatMode() {
-    openChatNotification.innerHTML = `🚀 OpenChat Modu Açıldı! Herkes tahmin yapabilir.`;
-    openChatNotification.style.display = "block";
-    wordContainer.style.fontSize = "100px";
-    fetchRandomWord();
+  openChatNotification.innerHTML = `🚀 OpenChat Modu Açıldı! Herkes tahmin yapabilir.`;
+  openChatNotification.style.display = "block";
+  wordContainer.style.fontSize = "100px";
+  fetchRandomWord();
 }
 
 function hideOpenChatMode() {
-    openChatNotification.innerHTML = `🔒 OpenChat Modu Kapatıldı.`;
-    setTimeout(() => {
-        openChatNotification.style.display = "none";
-    }, 3000);
-    wordContainer.innerHTML = "";
+  openChatNotification.innerHTML = `🔒 OpenChat Modu Kapatıldı.`;
+  setTimeout(() => {
+    openChatNotification.style.display = "none";
+  }, 3000);
+  wordContainer.innerHTML = "";
 }
