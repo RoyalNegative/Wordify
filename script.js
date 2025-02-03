@@ -169,6 +169,18 @@ socket.on("connect_error", (error) => {
   console.error("⚠️ Socket connection error:", error);
 });
 
+socket.on("leaderboardUpdate", (data) => {
+  console.log("📊 Leaderboard güncellemesi alındı:", data);
+
+  const leaderboardContainer = document.querySelector(".leaderboard");
+  leaderboardContainer.innerHTML = '<h3 class="leaderboard-title">LeaderBoard</h3>';
+  
+  data.forEach((player) => {
+    leaderboardContainer.innerHTML += `<p class="leaderboard-playername">${player.Name || "Unknown"}: ${player.Score || 0}</p>`;
+  });
+});
+
+
 async function fetchLeaderboard() {
   try {
     const response = await fetch(`${BACKEND_URL}/leaderboard`);
@@ -187,9 +199,6 @@ async function fetchLeaderboard() {
   }
 }
 
-
-
-setInterval(fetchLeaderboard, 60000);
 
 let countdownTimer;
 let timeLeft = 40;
