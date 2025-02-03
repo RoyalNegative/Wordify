@@ -76,6 +76,70 @@ socket.on("openChatMode", (data) => {
   }
 });
 
+function deneme(data){
+  console.log("Received openChatMode event:", data); // Gelen veriyi logla
+
+  openChatMode = true;
+  console.log("Updated openChatMode:", openChatMode); // Güncellenmiş durumu kontrol et
+
+  const openChatNotification = document.getElementById("openChatNotification");
+  if (!openChatNotification) {
+    console.error("Error: #openChatNotification element not found!");
+    return;
+  }
+
+  const openChatArea = document.getElementById("openChatArea");
+  if (!openChatArea) {
+    console.error("Error: #openChatArea element not found!");
+    return;
+  }
+
+  if (openChatMode) {
+    console.log("OpenChat Mode is being activated...");
+
+    openChatArea.style.display = "flex";
+    openChatArea.classList.add("open-chat-active");
+
+    setTimeout(() => {
+      console.log("Scrolling to bottom...");
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    }, 300);
+
+    openChatNotification.innerText = `🚀 OpenChat Modu Açıldı! Herkes tahmin yapabilir.`;
+    openChatNotification.style.backgroundColor = "red";
+    openChatNotification.style.display = "block";
+
+    openChatArea.style.bottom = "0";
+
+    setTimeout(() => {
+      console.log("Hiding openChatNotification...");
+      openChatNotification.style.display = "none";
+    }, 3000);
+
+    if (typeof startOpenChatCountdown === "function") {
+      console.log("Starting OpenChat Countdown...");
+      startOpenChatCountdown();
+    } else {
+      console.error("Error: startOpenChatCountdown function is not defined!");
+    }
+  } else {
+    console.log("OpenChat Mode is being deactivated...");
+
+    openChatArea.classList.remove("open-chat-active");
+
+    openChatNotification.innerText = `🔒 OpenChat Modu Kapatıldı!`;
+    openChatNotification.style.backgroundColor = "black";
+    openChatNotification.style.display = "block";
+
+    openChatArea.style.bottom = "-250px";
+
+    setTimeout(() => {
+      console.log("Hiding openChatNotification...");
+      openChatNotification.style.display = "none";
+    }, 3000);
+  }
+}
+
 function startOpenChatCountdown() {
   let countdown = 10;
   countdownText.innerText = countdown;
@@ -124,7 +188,8 @@ async function fetchLeaderboard() {
 }
 
 
-setInterval(fetchLeaderboard, 5000);
+
+setInterval(fetchLeaderboard, 60000);
 
 let countdownTimer;
 let timeLeft = 40;
