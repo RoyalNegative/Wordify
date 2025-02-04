@@ -11,6 +11,7 @@ const currentplayer = document.getElementById("currentplayer-text");
 
 
 
+
 //#region  Openchat Kontrol
 //hem acik hem kapalisi icin calisacak true false degeri direk backend den geliyor.
 socket.on("openChatMode", (data) => {
