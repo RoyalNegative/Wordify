@@ -1,0 +1,17 @@
+name: Notify Discord on Push
+
+on:
+  push:
+    branches:
+      - main  # Bildirim almak istediğin branch'i değiştir
+
+jobs:
+  discord_notification:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send push notification to Discord
+        uses: Ilshidur/action-discord@master
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        with:
+          args: "📢 Yeni bir push yapıldı! Commit mesajı: ${{ github.event.head_commit.message }}"
