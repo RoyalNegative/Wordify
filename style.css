@@ -43,6 +43,7 @@ body::-webkit-scrollbar {
     overflow: hidden;
     position: relative;
     margin-top: 20px;
+    transition: display 5s ease;
 }
 
 .timer-bar {
@@ -115,6 +116,7 @@ body::-webkit-scrollbar {
     gap: 88px;
     background-color: purple;
     margin-top: 180px;
+    transition: background-color 5s ease-out;
 }
 
 .leaderboard{
@@ -153,11 +155,6 @@ body::-webkit-scrollbar {
     font-size: 200px;
 }
 
-.transitionPurpleRed{
-    width: 100%;
-    height: 1000px;
-    background: linear-gradient(to bottom, purple, red); 
-}
 
 #openChatArea {
     width: 100%;
@@ -191,19 +188,47 @@ body::-webkit-scrollbar {
     margin-top: 10px;
 }
 
+.countdown{
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 994;
+    transition: all 0.6 ease-in-out;
+    display: flex;
+    flex-direction: column;
+    
+    align-items: center;
+    justify-content: center;
+    transform: all 1s ease;
+}
+
+.hidden{
+    display: none;
+}
+
+.countdown-title{
+    font-size: 50px;
+    color: white;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+}
+
 .countdown-text {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 200px;
     font-weight: bold;
     color: white;
     background: rgba(0, 0, 0, 0.7);
-    padding: 20px 40px;
-    border-radius: 10px;
+    padding: 0 20px;
+    border-radius: 0 0 10px 10px;
     z-index: 1000;
-    display: none;
+    width: max-content;
+    height: auto;
 }
 
 

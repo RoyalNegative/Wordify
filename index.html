@@ -31,25 +31,21 @@
           <audio id="backgroundMusic" autoplay loop>
             <source src="./sounds/backgroundMusic.mp3" type="audio/mp3" />
           </audio>
-          <div class="timer-bar-container">
+          <div class="timer-bar-container" id="timercontainer">
             <div class="timer-bar" id="timer-bar"></div>
             <p id="timer-text">40s</p>
           </div>
 
-          <h2 class="current-player">
-            Current player:
+          <h2 class="current-player" id="currentplayer-text">
+            Mevcut oyuncu:
             <span id="playerName"> !hello yazarak başlayabilirsiniz!</span>
           </h2>
           <ul class="word" id="word"></ul>
           <h2 class="description" id="definition">.....</h2>
         </div>
-        <div class="transitionPurpleRed"> </div>
-        <h1 id="countdownText" class="countdown-text"> </h1>
-
-        <div id="openChatArea" class="open-chat-hidden">
-          <h2>🔴 OpenChat Modu Açık</h2>
-          <p>Herkes tahmin yapabilir!</p>
-          <ul class="word" id="openChatWord"></ul>
+        <div class="countdown hidden" id="countdown-container">
+          <h3 class="countdown-title" id="countdown-title"> Açık sohbet modu açılıyor: </h3>
+          <h2 id="countdownText" class="countdown-text">  10 </h2>
         </div>
       </section>
     </main>

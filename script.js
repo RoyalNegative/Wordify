@@ -4,146 +4,48 @@ const socket = io(BACKEND_URL);
 let openChatMode = false;
 const Correctguessaudio = new Audio(`./sounds/correctguess.mp3`);
 const GameStartaudio = new Audio(`./sounds/gamestart.ogg`);
-
-const openChatArea = document.getElementById("openChatArea");
-
-const countdownText = document.createElement("h1");
-countdownText.classList.add("countdown-text");
-document.body.appendChild(countdownText);
+const countdownText = document.getElementById("countdownText");
+const countdownContainer = document.getElementById("countdown-container");
+const countdowntitle = document.getElementById("countdown-title");
+const currentplayer = document.getElementById("currentplayer-text");
 
 
+
+//#region  Openchat Kontrol
+//hem acik hem kapalisi icin calisacak true false degeri direk backend den geliyor.
 socket.on("openChatMode", (data) => {
-  console.log("Received openChatMode event:", data); // Gelen veriyi logla
-
   openChatMode = data.status;
-  console.log("Updated openChatMode:", openChatMode); // Güncellenmiş durumu kontrol et
-
-  const openChatNotification = document.getElementById("openChatNotification");
-  if (!openChatNotification) {
-    console.error("Error: #openChatNotification element not found!");
-    return;
-  }
-
-  const openChatArea = document.getElementById("openChatArea");
-  if (!openChatArea) {
-    console.error("Error: #openChatArea element not found!");
-    return;
-  }
-
-  if (openChatMode) {
-    console.log("OpenChat Mode is being activated...");
-
-    openChatArea.style.display = "flex";
-    openChatArea.classList.add("open-chat-active");
-
-    setTimeout(() => {
-      console.log("Scrolling to bottom...");
-      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-    }, 300);
-
-    openChatNotification.innerText = `🚀 OpenChat Modu Açıldı! Herkes tahmin yapabilir.`;
-    openChatNotification.style.backgroundColor = "red";
-    openChatNotification.style.display = "block";
-
-    openChatArea.style.bottom = "0";
-
-    setTimeout(() => {
-      console.log("Hiding openChatNotification...");
-      openChatNotification.style.display = "none";
-    }, 3000);
-
-    if (typeof startOpenChatCountdown === "function") {
-      console.log("Starting OpenChat Countdown...");
-      startOpenChatCountdown();
-    } else {
-      console.error("Error: startOpenChatCountdown function is not defined!");
-    }
-  } else {
-    console.log("OpenChat Mode is being deactivated...");
-
-    openChatArea.classList.remove("open-chat-active");
-
-    openChatNotification.innerText = `🔒 OpenChat Modu Kapatıldı!`;
-    openChatNotification.style.backgroundColor = "black";
-    openChatNotification.style.display = "block";
-
-    openChatArea.style.bottom = "-250px";
-
-    setTimeout(() => {
-      console.log("Hiding openChatNotification...");
-      openChatNotification.style.display = "none";
-    }, 3000);
-  }
+  openchatModeSwitch();
 });
 
-function deneme(data){
-  console.log("Received openChatMode event:", data); // Gelen veriyi logla
 
-  openChatMode = true;
-  console.log("Updated openChatMode:", openChatMode); // Güncellenmiş durumu kontrol et
-
-  const openChatNotification = document.getElementById("openChatNotification");
-  if (!openChatNotification) {
-    console.error("Error: #openChatNotification element not found!");
-    return;
-  }
-
-  const openChatArea = document.getElementById("openChatArea");
-  if (!openChatArea) {
-    console.error("Error: #openChatArea element not found!");
-    return;
-  }
-
+function openchatModeSwitch(){
+  let timerbar = document.getElementById("timercontainer"); 
+  openChatMode = !openChatMode;
   if (openChatMode) {
     console.log("OpenChat Mode is being activated...");
-
-    openChatArea.style.display = "flex";
-    openChatArea.classList.add("open-chat-active");
-
-    setTimeout(() => {
-      console.log("Scrolling to bottom...");
-      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-    }, 300);
-
-    openChatNotification.innerText = `🚀 OpenChat Modu Açıldı! Herkes tahmin yapabilir.`;
-    openChatNotification.style.backgroundColor = "red";
-    openChatNotification.style.display = "block";
-
-    openChatArea.style.bottom = "0";
-
-    setTimeout(() => {
-      console.log("Hiding openChatNotification...");
-      openChatNotification.style.display = "none";
-    }, 3000);
-
-    if (typeof startOpenChatCountdown === "function") {
-      console.log("Starting OpenChat Countdown...");
-      startOpenChatCountdown();
-    } else {
-      console.error("Error: startOpenChatCountdown function is not defined!");
-    }
+    countdownContainer.classList.remove("hidden");
+    countdowntitle.innerText = "Açık sohbet modu açılıyor...";
+    startOpenChatCountdown();
+   
+    timerbar.style.display = "none";
+    document.querySelector(".content-container").style.backgroundColor = "red";
+   
   } else {
     console.log("OpenChat Mode is being deactivated...");
-
-    openChatArea.classList.remove("open-chat-active");
-
-    openChatNotification.innerText = `🔒 OpenChat Modu Kapatıldı!`;
-    openChatNotification.style.backgroundColor = "black";
-    openChatNotification.style.display = "block";
-
-    openChatArea.style.bottom = "-250px";
-
-    setTimeout(() => {
-      console.log("Hiding openChatNotification...");
-      openChatNotification.style.display = "none";
-    }, 3000);
+    countdownContainer.classList.remove("hidden");
+    countdowntitle.innerText = "Açık sohbet modu kapatılıyor...";
+    startOpenChatCountdown();
+    document.querySelector(".content-container").style.backgroundColor = "purple";
+    timerbar.style.display = "block";
   }
 }
 
-function startOpenChatCountdown() {
-  let countdown = 10;
+//#endregion
+
+async function startOpenChatCountdown() {
+  let countdown = 5;
   countdownText.innerText = countdown;
-  countdownText.style.display = "block";
 
   const countdownInterval = setInterval(() => {
     countdown--;
@@ -151,11 +53,13 @@ function startOpenChatCountdown() {
 
     if (countdown === 0) {
       clearInterval(countdownInterval);
-      countdownText.style.display = "none";
+
       socket.emit("startOpenChatRound");
+      countdownContainer.classList.add("hidden");
     }
   }, 1000);
 }
+
 
 socket.on("connect", () => {
   console.log("✅ Connected to server!");
