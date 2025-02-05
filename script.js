@@ -67,6 +67,12 @@ socket.on("openChatMode", (data) => {
   renderWord(data.word, data.definition);
 });
 
+
+socket.on("openchatnewround" , (data) =>{
+  console.log("openchat icin yeni round basliyor");
+  renderWord(data.word);
+})
+
 function openchatModeSwitch() {
   let timerbar = document.getElementById("timercontainer"); 
   
@@ -174,19 +180,7 @@ socket.on("gameStart", (data) => {
   startCountdown();
 });
 
-socket.on("gameStartOpenChat", (data) => {
-  console.log(`🟢 Received gameStartOpenChat event!`);
-  console.log(`🟡 Word received: ${data.word.word}`);
 
-  if (openChatMode) {
-    renderOpenChatWord(data.word.word);
-  } else {
-    playGameStartSound();
-    renderWord(data.word.word, data.word.definition);
-  }
-
-  playGameStartSound();
-});
 
 socket.on("correctGuess", (data) => {
   console.log("✅ Correct guess received! Revealing word.");
@@ -260,15 +254,10 @@ socket.on("correctGuessOpenChat", (data) => {
   setTimeout(() => {
     resetGame();
   }, 5000);
+  // yeni openchat duru baslamali
 });
 
-function correctGuessSound(){
-  Correctguessaudio.play();
-}
 
-function playGameStartSound() {
-  GameStartaudio.play();
-}
 
 socket.on("wrongGuess", () => {
   console.log("❌ Yanlış tahmin!");
@@ -287,10 +276,22 @@ socket.on("wrongGuess", () => {
   }, 700);
 });
 
+//#region  PLAY SOUNDS
+function correctGuessSound(){
+  Correctguessaudio.play();
+}
+
+function playGameStartSound() {
+  GameStartaudio.play();
+}
 function playSoundWrongGuess() {
   let audio = new Audio(`./sounds/wrongguess.mp3`);
   audio.play();
 }
+
+//#endregion
+
+
 
 function setcurrentplayer(playername) {
   const player = document.getElementById("playerName");
@@ -328,23 +329,4 @@ function resetGame() {
   clearInterval(countdownTimer);
   document.getElementById("timer-bar").style.width = "0%";
   document.getElementById("timer-text").textContent = "";
-}
-
-const openChatNotification = document.createElement("div");
-openChatNotification.classList.add("open-chat-notification");
-document.body.appendChild(openChatNotification);
-
-function showOpenChatMode() {
-  openChatNotification.innerHTML = `🚀 OpenChat Modu Açıldı! Herkes tahmin yapabilir.`;
-  openChatNotification.style.display = "block";
-  wordContainer.style.fontSize = "100px";
-  fetchRandomWord();
-}
-
-function hideOpenChatMode() {
-  openChatNotification.innerHTML = `🔒 OpenChat Modu Kapatıldı.`;
-  setTimeout(() => {
-    openChatNotification.style.display = "none";
-  }, 3000);
-  wordContainer.innerHTML = "";
 }
