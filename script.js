@@ -14,38 +14,12 @@ const currentplayer = document.getElementById("currentplayer-text");
 
 //#region  Openchat Kontrol
 //hem acik hem kapalisi icin calisacak true false degeri direk backend den geliyor.
-socket.on("openChatMode", (data) => {
-  openChatMode = data.status;
-  openchatModeSwitch();
-});
 
-
-function openchatModeSwitch(){
-  let timerbar = document.getElementById("timercontainer"); 
-  openChatMode = !openChatMode;
-  if (openChatMode) {
-    console.log("OpenChat Mode is being activated...");
-    countdownContainer.classList.remove("hidden");
-    countdowntitle.innerText = "Açık sohbet modu açılıyor...";
-    startOpenChatCountdown();
-   
-    timerbar.style.display = "none";
-    document.querySelector(".content-container").style.backgroundColor = "red";
-   
-  } else {
-    console.log("OpenChat Mode is being deactivated...");
-    countdownContainer.classList.remove("hidden");
-    countdowntitle.innerText = "Açık sohbet modu kapatılıyor...";
-    startOpenChatCountdown();
-    document.querySelector(".content-container").style.backgroundColor = "purple";
-    timerbar.style.display = "block";
-  }
-}
 
 //#endregion
 
-async function startOpenChatCountdown() {
-  let countdown = 5;
+async function startOpenChatCountdown(time) {
+  let countdown = time;
   countdownText.innerText = countdown;
 
   const countdownInterval = setInterval(() => {
@@ -85,6 +59,42 @@ socket.on("leaderboardUpdate", (data) => {
   });
 });
 
+socket.on("openChatMode", (data) => {
+  console.log("Backend openChatMode status:", data.status); 
+  openChatMode = data.status; // Eğer tersse, bunu !data.status yap
+  
+  openchatModeSwitch();
+  renderWord(data.word, data.definition);
+});
+
+function openchatModeSwitch() {
+  let timerbar = document.getElementById("timercontainer"); 
+  
+  if (openChatMode) {
+    console.log("✅ OpenChat Mode is being activated...");
+    countdownContainer.classList.remove("hidden");
+    countdowntitle.innerText = "Açık sohbet modu açılıyor...";
+    startOpenChatCountdown(5);
+   
+    timerbar.style.display = "none";
+    document.querySelector(".content-container").style.backgroundColor = "red";
+    currentplayer.innerHTML = ""; 
+   
+  } else {
+    console.log("❌ OpenChat Mode is being deactivated...");
+    countdownContainer.classList.remove("hidden");
+    countdowntitle.innerText = "Açık sohbet modu kapatılıyor...";
+    startOpenChatCountdown(5);
+
+    document.querySelector(".content-container").style.backgroundColor = "purple";
+    timerbar.style.display = "block";
+    
+    currentplayer.innerHTML = `
+      Mevcut oyuncu:
+      <span id="playerName"> !hello yazarak başlayabilirsiniz!</span>
+    `;
+  }
+}
 
 async function fetchLeaderboard() {
   try {
@@ -149,19 +159,34 @@ socket.on("gameStart", (data) => {
   console.log(`🟢 Received gameStart event!`);
   console.log(`🔵 New player: ${data.playername}`);
   console.log(`🟡 Word received: ${data.word.word}`);
+  console.log(`openchatmode: ${openChatMode}`);
+
 
   if (openChatMode) {
     renderOpenChatWord(data.word.word);
   } else {
     playGameStartSound();
     setcurrentplayer(data.playername);
-    renderWord(data.word.word, data.word.definition);
+    renderWord(data.word);
   }
 
   playGameStartSound();
   startCountdown();
 });
 
+socket.on("gameStartOpenChat", (data) => {
+  console.log(`🟢 Received gameStartOpenChat event!`);
+  console.log(`🟡 Word received: ${data.word.word}`);
+
+  if (openChatMode) {
+    renderOpenChatWord(data.word.word);
+  } else {
+    playGameStartSound();
+    renderWord(data.word.word, data.word.definition);
+  }
+
+  playGameStartSound();
+});
 
 socket.on("correctGuess", (data) => {
   console.log("✅ Correct guess received! Revealing word.");
@@ -190,10 +215,48 @@ socket.on("correctGuess", (data) => {
     }
   }, 1000);
 
-  clearInterval(countdownTimer);
-  document.getElementById("timer-bar").style.width = "0%";
-  document.getElementById("timer-text").textContent = "";
 
+    clearInterval(countdownTimer);
+    document.getElementById("timer-bar").style.width = "0%";
+    document.getElementById("timer-text").textContent = "";
+  
+
+  setTimeout(() => {
+    resetGame();
+  }, 5000);
+});
+
+socket.on("correctGuessOpenChat", (data) => {
+  console.log("✅ Correct guess received openchat! Revealing word.");
+  correctGuessSound();
+
+  const wordContainer = document.getElementById("word");
+  wordContainer.innerHTML = "";
+  
+  data.word.split("").forEach((char, index) => {
+    setTimeout(() => {
+      const li = document.createElement("li");
+      li.textContent = char;
+      li.classList.add("word-reveal");
+      wordContainer.appendChild(li);
+    }, index * 300);
+  });
+
+  
+  let blinkCount = 0;
+  const blinkInterval = setInterval(() => {
+    wordContainer.style.backgroundColor = blinkCount % 2 === 0 ? "green" : "";
+    blinkCount++;
+    if (blinkCount === 3) {
+      clearInterval(blinkInterval);
+      wordContainer.style.backgroundColor = "";
+    }
+  }, 1000);
+
+  let message = document.getElementById("currentplayer-text");
+  message.innerText = `Kelimeyi bilen oyuncu: ${data.username}`;
+  
+  startOpenChatCountdown(5);
   setTimeout(() => {
     resetGame();
   }, 5000);
@@ -234,13 +297,18 @@ function setcurrentplayer(playername) {
   player.innerText = playername;
 }
 
-function renderWord(word, definition) {
+function renderWord(wordObj) {
+  
+  console.log("🔎 Debug: Word received in renderWord:", wordObj.word);
+  console.log("🔎 Debug: Type of word:", typeof wordObj);
+
   const wordContainer = document.getElementById("word");
   const description = document.getElementById("definition");
   wordContainer.innerHTML = "";
-  description.innerText = definition;
+  console.log(`${wordObj.definition}`);
+  description.innerText = wordObj.definition;
 
-  word.split("").forEach(() => {
+  (wordObj.word).split("").forEach(() => {
     const li = document.createElement("li");
     li.textContent = "-";
     wordContainer.appendChild(li);
