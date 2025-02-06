@@ -144,6 +144,9 @@ body::-webkit-scrollbar {
 
 .description{
     font-size: 30px;
+    width: 80%;
+    height: auto;
+    text-align: center;
 }
 .current-player{
     font-size: 40px;
