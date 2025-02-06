@@ -135,6 +135,11 @@ body::-webkit-scrollbar {
     text-align: center;
     font-size: 30px;
     font-weight: 700;
+    border: 2px solid purple;
+    border-radius: 15px;
+    padding: 10px;
+    margin-bottom: 10px;
+    
 }
 
 .leaderboard-playername{
@@ -238,6 +243,8 @@ body::-webkit-scrollbar {
 .streamerimg{
     display: none;
 }
+
+
 
 
 
