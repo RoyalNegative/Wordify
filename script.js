@@ -385,3 +385,16 @@ function resetGame() {
   document.getElementById("timer-bar").style.width = "0%";
   document.getElementById("timer-text").textContent = "";
 }
+
+
+
+
+// function openchatmodetry(){
+//   if(openChatMode){
+//     openChatMode = false;
+//   }else{
+//     openChatMode = true; // Eğer tersse, bunu !data.status yap
+//   }
+  
+//   openchatModeSwitch();
+// }

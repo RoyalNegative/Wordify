@@ -239,7 +239,46 @@ body::-webkit-scrollbar {
     height: auto;
 }
 
+.streak-container{
+    height: 190px;
+    width: 110px;
+    position: absolute;
+    right: 5%;
+    top: 0;
+    z-index: 9998 ;
+    /* display: none; */
+    display: flex;
+    justify-content: center;
+    align-items:end;
+    background-image: url("./images/flame.gif");
+    background-size: cover;
+    object-fit: cover;
+    background-position: center bottom;
+    transform: rotate(15deg);
+    padding-bottom: 15px;
+}
 
+.flameimg{
+    width: 135px;
+    height: 350px;
+    animation: rotateY 5s infinite linear;
+    transform: rotate(15deg);
+    }
+
+    /* @keyframes rotateY {
+        from {
+            transform: rotateY(0deg);
+        }
+        to {
+            transform: rotateY(360deg);
+        }  
+    } */
+
+.streak-number{
+    z-index: 9999;
+    font-size: 40px;
+    font-weight: bold;  
+}
 .streamerimg{
     display: none;
 }
