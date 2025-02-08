@@ -66,7 +66,7 @@ socket.on("streakupdate", (data) => {
 
   if (data.visible && data.count >= 3) {
     streakContainer.style.display = "flex";
-    streakNumber.innerText = `🔥 x${data.count}`;
+    streakNumber.innerText = `x${data.count}`;
 
     streakContainer.classList.add("streak-animate");
   } else {
