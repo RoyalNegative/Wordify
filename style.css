@@ -256,6 +256,7 @@ body::-webkit-scrollbar {
     background-position: center bottom;
     transform: rotate(15deg);
     padding-bottom: 15px;
+    display: none;
 }
 
 .flameimg{
