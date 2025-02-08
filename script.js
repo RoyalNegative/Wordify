@@ -300,19 +300,18 @@ socket.on("fullReveal", (data) => {
   console.log("⏳ Süre doldu! Kelime açılıyor:", data.word);
 
   const wordContainer = document.getElementById("word");
-  wordContainer.innerHTML = ""; // Önce içeriği temizle
+  wordContainer.innerHTML = ""; 
 
-  // Kelimenin harflerini tek tek göster
   data.word.split("").forEach((char, index) => {
     setTimeout(() => {
       const li = document.createElement("li");
       li.textContent = char;
       li.classList.add("word-reveal");
       wordContainer.appendChild(li);
-    }, index * 200); // Harfler yavaş yavaş açılsın
+    }, index * 200); 
   });
 
-  // Blink efekti ekleyelim (isteğe bağlı)
+ 
   let blinkCount = 0;
   const blinkInterval = setInterval(() => {
     wordContainer.style.backgroundColor = blinkCount % 2 === 0 ? "red" : "";
@@ -323,7 +322,7 @@ socket.on("fullReveal", (data) => {
     }
   }, 500);
 
-  // 5 saniye sonra oyunu sıfırla
+ 
   setTimeout(() => {
     resetGame();
   }, 5000);
@@ -372,8 +371,11 @@ function renderWord(wordObj) {
 }
 
 socket.on("resetGame", () => {
-  resetGame();
+  const wordContainer = document.getElementById("word");
+  wordContainer.innerHTML = "🎮 Yeni oyun bekleniyor...";
 });
+
+
 
 function resetGame() {
   document.getElementById("playerName").innerText =
