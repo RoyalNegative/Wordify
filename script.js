@@ -372,7 +372,6 @@ function renderWord(wordObj) {
 
 socket.on("resetGame", () => {
   const wordContainer = document.getElementById("word");
-  wordContainer.innerHTML = "🎮 Yeni oyun bekleniyor...";
 });
 
 
