@@ -254,7 +254,6 @@ socket.on("correctGuessOpenChat", (data) => {
   setTimeout(() => {
     resetGame();
   }, 5000);
-  // yeni openchat duru baslamali
 });
 
 
@@ -275,6 +274,61 @@ socket.on("wrongGuess", () => {
     }
   }, 700);
 });
+
+
+socket.on("updateWord", (data) => {
+  console.log("🔠 Harf açıldı! Yeni kelime durumu:", data.word);
+
+  const wordContainer = document.getElementById("word");
+  wordContainer.innerHTML = ""; 
+
+  // Açılan harfleri ekrana yaz
+  data.word.split(" ").forEach((char) => {
+    const li = document.createElement("li");
+    li.textContent = char !== "_" ? char : "_"; 
+    li.classList.add("word-reveal");
+    wordContainer.appendChild(li);
+  });
+
+  // Harf açılma efekti (isteğe bağlı)
+  wordContainer.classList.add("word-reveal-animation");
+  setTimeout(() => wordContainer.classList.remove("word-reveal-animation"), 500);
+});
+
+
+socket.on("fullReveal", (data) => {
+  console.log("⏳ Süre doldu! Kelime açılıyor:", data.word);
+
+  const wordContainer = document.getElementById("word");
+  wordContainer.innerHTML = ""; // Önce içeriği temizle
+
+  // Kelimenin harflerini tek tek göster
+  data.word.split("").forEach((char, index) => {
+    setTimeout(() => {
+      const li = document.createElement("li");
+      li.textContent = char;
+      li.classList.add("word-reveal");
+      wordContainer.appendChild(li);
+    }, index * 200); // Harfler yavaş yavaş açılsın
+  });
+
+  // Blink efekti ekleyelim (isteğe bağlı)
+  let blinkCount = 0;
+  const blinkInterval = setInterval(() => {
+    wordContainer.style.backgroundColor = blinkCount % 2 === 0 ? "red" : "";
+    blinkCount++;
+    if (blinkCount === 3) {
+      clearInterval(blinkInterval);
+      wordContainer.style.backgroundColor = "";
+    }
+  }, 500);
+
+  // 5 saniye sonra oyunu sıfırla
+  setTimeout(() => {
+    resetGame();
+  }, 5000);
+});
+
 
 //#region  PLAY SOUNDS
 function correctGuessSound(){
