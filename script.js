@@ -8,15 +8,9 @@ const countdownText = document.getElementById("countdownText");
 const countdownContainer = document.getElementById("countdown-container");
 const countdowntitle = document.getElementById("countdown-title");
 const currentplayer = document.getElementById("currentplayer-text");
+const streakContainer = document.getElementById("streak-continer");
+const streakNumber = document.getElementById("streak-number");
 
-
-
-
-//#region  Openchat Kontrol
-//hem acik hem kapalisi icin calisacak true false degeri direk backend den geliyor.
-
-
-//#endregion
 
 async function startOpenChatCountdown(time) {
   let countdown = time;
@@ -67,6 +61,19 @@ socket.on("openChatMode", (data) => {
   renderWord(data.word, data.definition);
 });
 
+socket.on("streakupdate", (data) => {
+  console.log("🔥 Streak Güncellemesi Alındı:", data);
+
+  if (data.visible && data.count >= 3) {
+    streakContainer.style.display = "flex";
+    streakNumber.innerText = `🔥 x${data.count}`;
+
+    streakContainer.classList.add("streak-animate");
+  } else {
+    streakContainer.style.display = "none";
+    streakContainer.classList.remove("streak-animate");
+  }
+});
 
 socket.on("openchatnewround" , (data) =>{
   console.log("openchat icin yeni round basliyor");
