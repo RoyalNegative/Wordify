@@ -43,14 +43,39 @@ socket.on("connect_error", (error) => {
 });
 
 socket.on("leaderboardUpdate", (data) => {
-  console.log("📊 Leaderboard güncellemesi alındı:", data);
+  // console.log("📊 Leaderboard güncellemesi alındı:", data);
 
-  const leaderboardContainer = document.querySelector(".leaderboard");
-  leaderboardContainer.innerHTML = '<h3 class="leaderboard-title">LeaderBoard</h3>';
+  // const leaderboardContainer = document.querySelector(".leaderboard");
+  // leaderboardContainer.innerHTML = '<h3 class="leaderboard-title">LeaderBoard</h3>';
   
-  data.forEach((player) => {
-    leaderboardContainer.innerHTML += `<p class="leaderboard-playername">${player.Name || "Unknown"}: ${player.Score || 0}</p>`;
-  });
+  // data.forEach((player) => {
+  //   leaderboardContainer.innerHTML += `<p class="leaderboard-playername">${player.Name || "Unknown"}: ${player.Score || 0}</p>`;
+  // });
+  const leaderboardContainer = document.querySelector(".leaderboard");
+leaderboardContainer.innerHTML = `
+  <h3 class="leaderboard-title">LeaderBoard</h3>
+  <table class="leaderboard-table">
+    <thead>
+      <tr>
+        <th>Oyuncu</th>
+        <th>Puan</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${data
+        .map(
+          (player) => `
+        <tr>
+          <td>${player.Name || "Unknown"}</td>
+          <td>${player.Score || 0}</td>
+        </tr>
+      `
+        )
+        .join("")}
+    </tbody>
+  </table>
+`;
+
 });
 
 socket.on("openChatMode", (data) => {
@@ -116,12 +141,38 @@ async function fetchLeaderboard() {
     console.log("📊 Gelen Leaderboard Verisi:", data); 
 
     const leaderboardContainer = document.querySelector(".leaderboard");
-    leaderboardContainer.innerHTML =
-      '<h3 class="leaderboard-title">LeaderBoard</h3>';
+    // leaderboardContainer.innerHTML =
+    //   '<h3 class="leaderboard-title">LeaderBoard</h3>';
 
-    data.forEach((player) => {
-      leaderboardContainer.innerHTML += `<p class="leaderboard-playername">${player.Name || "Unknown"}: ${player.Score || 0}</p>`;
-    });
+    // data.forEach((player) => {
+    //   leaderboardContainer.innerHTML += `<p class="leaderboard-playername">${player.Name || "Unknown"}: ${player.Score || 0}</p>`;
+    // });
+    // const leaderboardContainer = document.querySelector(".leaderboard");
+    leaderboardContainer.innerHTML = `
+      <h3 class="leaderboard-title">LeaderBoard</h3>
+      <table class="leaderboard-table">
+        <thead>
+          <tr>
+            <th>Oyuncu</th>
+            <th>Puan</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${data
+            .map(
+              (player) => `
+            <tr>
+              <td>${player.Name || "Unknown"}</td>
+              <td>${player.Score || 0}</td>
+            </tr>
+          `
+            )
+            .join("")}
+        </tbody>
+      </table>
+    `;
+    
+
   } catch (error) {
     console.error("⚠️ Leaderboard çekme hatası:", error);
   }

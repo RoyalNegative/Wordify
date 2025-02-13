@@ -122,7 +122,7 @@ body::-webkit-scrollbar {
 .leaderboard{
     background: var(--background-color);
     border-radius: 15px;
-    padding: 10px 20px;
+    padding: 10px 10px;
     align-self: flex-start;
     position: fixed;
     left: 0.5%;
@@ -285,7 +285,27 @@ body::-webkit-scrollbar {
 }
 
 
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 20px;
+  }
+  
+  .leaderboard-table th,
+  .leaderboard-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .leaderboard-table th {
+    background-color: #f2f2f2;
+  }
 
+  .leaderboard-table tbody tr:nth-child(odd) {
+    background-color: #e0e 0e0; /* Her tek satır için koyu bir arka plan */
+  }
+  
 
 
 
