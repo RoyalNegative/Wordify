@@ -303,7 +303,7 @@ body::-webkit-scrollbar {
   }
 
   .leaderboard-table tbody tr:nth-child(odd) {
-    background-color: #e0e 0e0; /* Her tek satır için koyu bir arka plan */
+    background-color: #e0e0e0; /* Her tek satır için koyu bir arka plan */
   }
   
 
